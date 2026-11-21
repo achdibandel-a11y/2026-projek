@@ -1,0 +1,4268 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BandelTV Playlist</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto !important;
+    min-height: 100% !important;
+    background: #0b0d10;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+#app {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: #0b0d10;
+}
+
+#app::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://bandeltv.xyz/2026/player/new/gambar2bg.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1.0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#app::after {
+    display: none;
+}
+
+#app > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* SIDEBAR */
+#sidebar {
+    width: 245px;
+    min-width: 245px;
+    height: calc(100vh - 24px);
+    margin: 12px 0 12px 12px;
+    background: rgba(18, 21, 26, 0.50);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 100;
+    position: relative;
+    transition: width 0.3s ease, min-width 0.3s ease;
+}
+
+.sidebar-top {
+    height: 64px;
+    min-height: 64px;
+    max-height: 64px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    background: rgba(18, 21, 26, 0.80);
+}
+
+.brand {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.brand-icon {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    min-height: 72px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-right: 12px !important;
+}
+
+.brand-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: 0.3px;
+    color: #ffffff;
+}
+
+.brand-sub {
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 0.6px;
+    line-height: 1.1;
+}
+
+/* CATEGORY HEADER CONTAINER */
+.category-header-wrap {
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    padding: 8px 12px;
+}
+
+.category-header-btn {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #15181d;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.category-header-btn:hover {
+    background: #1e293b;
+    border-color: #38bdf8;
+}
+
+.category-header-btn .category-icon-left,
+.category-header-btn .category-icon-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+    flex-shrink: 0;
+    width: 20px;
+}
+
+.category-header-btn .category-label {
+    flex: 1;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+    padding: 0 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.category-header-btn.is-focused,
+.category-header-btn:focus {
+    background: #facc15 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 14px rgba(250, 204, 21, 0.9) !important;
+    transform: scale(1.02);
+}
+
+.category-header-btn.is-focused .category-label,
+.category-header-btn:focus .category-label {
+    color: #000000 !important;
+    font-weight: 900 !important;
+}
+
+.category-header-btn.is-focused svg,
+.category-header-btn:focus svg {
+    stroke: #000000 !important;
+    color: #000000 !important;
+}
+
+#sidebar.collapsed {
+    width: 60px !important;
+    min-width: 60px !important;
+}
+
+#sidebar.collapsed .brand-text,
+#sidebar.collapsed .brand-sub,
+#sidebar.collapsed .category-label,
+#sidebar.collapsed .category-icon-right,
+#sidebar.collapsed .category-name {
+    display: none !important;
+}
+
+@media (orientation: portrait) {
+    #app::before {
+        background-size: 100% 100% !important;
+        background-position: center center !important;
+    }
+    html, body {
+        height: 100vh !important;
+        overflow: hidden !important;
+    }
+    #app {
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        padding-top: 40px !important;
+    }
+    #sidebar {
+        width: calc(100% - 24px) !important;
+        min-width: calc(100% - 24px) !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin: 4px 12px 0 12px !important;
+        flex-shrink: 0 !important;
+    }
+    .category-wrapper {
+        max-height: none !important;
+        height: auto !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-x !important;
+        padding: 6px 4px !important;
+        white-space: nowrap !important;
+    }
+    .category-wrapper::-webkit-scrollbar {
+        display: none !important;
+    }
+    #categoryList {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        width: 100% !important;
+        align-items: center !important;
+        padding-bottom: 2px !important;
+    }
+    .category {
+        flex-shrink: 0 !important;
+        width: auto !important;
+        margin-bottom: 0 !important;
+        min-height: 36px !important;
+        padding: 0 14px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 20px !important;
+    }
+    .category.active::before {
+        display: none !important;
+    }
+    #main {
+        width: calc(100% - 24px) !important;
+        flex: 1 !important;
+        height: auto !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        margin: 8px 12px 12px 12px !important;
+    }
+    #content {
+        flex: 1 !important;
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        min-height: 0 !important;
+        padding: 8px 10px 20px !important;
+    }
+    .main-header {
+        margin: 0 !important;
+    }
+    .bmkg-bar {
+        margin: 6px 0 0 0 !important;
+    }
+    .channel-list {
+        gap: 8px !important;
+    }
+    .channel {
+        min-height: 70px !important;
+        padding: 6px 8px !important;
+    }
+    iframe, .iframe-player, .player-container, #playerContainer {
+        margin-top: 40px !important;
+    }
+}
+    .channel-logo-wrap {
+        width: 100% !important;
+        height: 56px !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin-right: 0 !important;
+    }
+    .channel-name {
+        font-size: 11px !important;
+        line-height: 14px !important;
+    }
+}
+
+.category-wrapper {
+    flex: 1;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding: 10px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: #38bdf8 rgba(255, 255, 255, 0.08);
+}
+
+.category-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.category-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+}
+
+.category-wrapper::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 4px;
+}
+
+#categoryList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.category {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    padding: 0 12px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    color: #e2e8f0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+}
+
+.category:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+.category.active {
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.28), rgba(14, 165, 233, 0.12));
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+.category.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 4px;
+    background: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+}
+
+.category-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* PLAYLIST POPUP */
+.playlist-popup {
+    display: none;
+    position: absolute;
+    top: 52px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #0f1217;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.85);
+    z-index: 99999;
+    height: auto;
+    max-height: 60vh;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior: contain !important;
+    pointer-events: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: #38bdf8 rgba(255, 255, 255, 0.08);
+}
+
+.playlist-popup::-webkit-scrollbar {
+    width: 6px;
+}
+
+.playlist-popup::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+}
+
+.playlist-popup::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 4px;
+}
+
+.playlist-popup.show {
+    display: block !important;
+}
+
+.playlist-item {
+    padding: 12px 14px;
+    color: #f1f5f9;
+    cursor: pointer;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+    display: block;
+    margin-bottom: 8px;
+    background: #171b22;
+    border: 1.5px solid #ff2a85;
+    box-shadow: 0 2px 8px rgba(255, 42, 133, 0.2);
+    transition: all 0.2s ease;
+}
+
+.playlist-item:hover {
+    background: rgba(255, 42, 133, 0.15);
+    border-color: #ff5ca1;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 42, 133, 0.5);
+    transform: translateY(-1px);
+}
+
+.playlist-item.active {
+    background: linear-gradient(90deg, rgba(255, 42, 133, 0.35), rgba(217, 26, 102, 0.2));
+    color: #ffffff;
+    border: 1.5px solid #ff2a85;
+    box-shadow: 0 0 14px rgba(255, 42, 133, 0.65);
+}
+
+.playlist-item.is-focused,
+.playlist-item:focus {
+    background: #facc15 !important;
+    color: #000000 !important;
+    outline: none !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.9) !important;
+}
+
+/* MAIN */
+#main {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER ATAS */
+.main-header {
+    height: 66px;
+    min-height: 66px;
+    max-height: 66px;
+    margin: 12px 12px 0 12px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    background: rgba(11, 13, 16, 0.80);
+
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+}
+
+/* BMKG RUNNING TEXT BAR */
+.bmkg-bar {
+    height: 38px;
+    min-height: 38px;
+    margin: 8px 12px 0 12px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.75);
+
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 10px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 5;
+}
+
+.bmkg-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    z-index: 2;
+}
+
+.bmkg-marquee-wrapper {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    margin-left: 10px;
+}
+
+.bmkg-marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: bmkgMarquee 40s linear infinite;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.bmkg-marquee-text b {
+    color: #facc15;
+}
+
+.bmkg-marquee-text span.val {
+    color: #38bdf8;
+    margin-right: 14px;
+}
+
+.bmkg-marquee-wrapper:hover .bmkg-marquee-text {
+    animation-play-state: paused;
+}
+
+@keyframes bmkgMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@media (orientation: portrait) {
+    .portrait-controls-bar {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 16px;
+        margin: 0 12px 12px 12px;
+        background: rgba(11, 13, 16, 0.80) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        flex-shrink: 0;
+    }
+}
+
+.header-left {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+#currentCategory {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.channel-total {
+    margin-top: 4px;
+    color: #8d96a4;
+    font-size: 11px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.header-controls > * {
+    margin-left: 12px !important;
+}
+
+.header-controls > *:first-child {
+    margin-left: 0 !important;
+}
+
+/* TOMBOL SETTINGS */
+.settings-button-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #ffffff !important;
+    background: #475569;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.settings-button-circle:hover {
+    background: #64748b;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.settings-button-circle svg {
+    pointer-events: none;
+}
+
+.portrait-search-container {
+    display: none;
+}
+
+.portrait-controls-bar {
+    display: none;
+}
+
+@media (orientation: portrait) {
+    #headerControls {
+        display: none !important;
+    }
+    .portrait-controls-bar {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 16px;
+        margin: 0 12px 12px 12px;
+        background: rgba(11, 13, 16, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        flex-shrink: 0;
+    }
+    #headerControls #searchButton {
+        display: none !important;
+    }
+    .sidebar-top {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    .portrait-search-container {
+        display: flex !important;
+        align-items: center;
+        background: #15181d;
+        border: 1.5px solid #ffffff !important;
+        border-radius: 15px;
+        height: 30px;
+        width: 30px;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        margin-right: 4px;
+    }
+    .portrait-search-container.open {
+        width: 140px;
+    }
+    .portrait-search-input {
+        width: 0;
+        opacity: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #ffffff;
+        font-size: 11px;
+        padding: 0;
+        transition: width 0.3s ease, opacity 0.2s ease;
+    }
+    .portrait-search-container.open .portrait-search-input {
+        width: 100px;
+        opacity: 1;
+        padding: 0 6px 0 2px;
+    }
+}
+
+.search-container-expand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    background: #15181d;
+    border: 1.5px solid #ffffff !important;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.search-container-expand.open,
+.search-container-expand:focus-within {
+    width: 175px;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+}
+
+.search-button-circle {
+    width: 27px;
+    height: 27px;
+    min-width: 27px;
+    min-height: 27px;
+    border-radius: 50%;
+    border: 0 !important;
+    background: transparent;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.search-input-field {
+    width: 0;
+    opacity: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #ffffff;
+    font-size: 11px;
+    padding: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.search-container-expand.open .search-input-field,
+.search-container-expand:focus-within .search-input-field {
+    width: 135px;
+    opacity: 1;
+    padding: 0 8px 0 2px;
+}
+
+.search-input-field::placeholder {
+    color: #8d96a4;
+}
+
+.refresh-button-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #ffffff !important;
+    background: #0ea5e9;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.refresh-button-circle:hover {
+    border-color: #ff1744 !important;
+    background: #0284c7;
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
+}
+
+.refresh-button-circle.loading .refresh-svg-icon {
+    animation: refreshSpin 0.7s linear infinite !important;
+}
+
+@keyframes refreshSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.exit-power-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #ffffff;
+    background: #dc2626;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.45);
+    transition: background 0.2s ease, transform 0.2s ease;
+    outline: none;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.exit-power-button:hover {
+    background: #ef4444;
+    transform: scale(1.08);
+}
+
+/* CONTENT */
+#content {
+    flex: 1;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior: contain !important;
+    padding: 22px 24px 30px;
+}
+
+#channelList {
+    width: 100%;
+}
+
+.channel-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+/* KARTU CHANNEL */
+.channel {
+    position: relative;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    background: #1e3a5f;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    transform: translateZ(0);
+    transition: transform 0.2s ease, border 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.channel:hover {
+    transform: translateY(-2px);
+    border-color: #38bdf8;
+    background: linear-gradient(145deg, rgba(56, 189, 248, 0.65), rgba(14, 165, 233, 0.65));
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.40);
+}
+
+.channel-logo-wrap {
+    flex-shrink: 0;
+    width: 100% !important;
+    height: 64px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d0f12;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin-right: 0;
+}
+
+.channel-logo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+.channel-logo-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.channel-info {
+    min-width: 0;
+    width: 100%;
+    flex: none;
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.channel-name {
+    color: #f2f4f7;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    margin: 0;
+}
+
+.channel-delete-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.channel-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.4);
+    color: #ffffff;
+}
+
+.state-box {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #7a8493;
+    text-align: center;
+}
+
+#categoryList .state-box {
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 0 16px !important;
+    font-size: 12px !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    border-radius: 20px !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    color: #94a3b8 !important;
+    display: inline-flex !important;
+    white-space: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#categoryList .state-box .state-icon {
+    font-size: 14px !important;
+}
+
+.state-icon {
+    font-size: 28px;
+    opacity: 0.6;
+}
+
+.state-text {
+    font-size: 13px;
+}
+
+/* MODAL DIALOG PENGATURAN & POPUP */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 999999;
+    overflow-y: auto;
+    padding: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: #14181f;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: auto;
+    max-height: 90vh;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.modal-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-body-split {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal-col-left,
+.modal-col-right {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #14181f;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    background: #090b0e;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.btn-modal:focus,
+.btn-primary:focus,
+.btn-secondary:focus {
+    border: 2px solid #facc15 !important;
+    background: rgba(250, 204, 21, 0.25) !important;
+    color: #ffffff !important;
+    outline: none !important;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.9) !important;
+    transform: scale(1.02);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.btn-modal {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #0ea5e9;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #0284c7;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.custom-list-header {
+    font-size: 12px;
+    font-weight: 800;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.custom-list-container {
+    max-height: 160px;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+
+.custom-list-container::-webkit-scrollbar {
+    width: 5px;
+}
+.custom-list-container::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 4px;
+}
+
+.custom-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1f2937;
+    border: 1px solid #334155;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.custom-item-info {
+    min-width: 0;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.custom-item-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-item-url {
+    font-size: 10px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-delete-item {
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-item:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.custom-empty {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    padding: 16px 0;
+}
+
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .modal-card {
+        max-width: 780px !important;
+        padding: 16px 20px !important;
+    }
+    .modal-body-split {
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+    }
+    .modal-col-left {
+        flex: 1.1 !important;
+    }
+    .modal-col-right {
+        flex: 1.2 !important;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        padding-left: 18px;
+    }
+    .custom-list-header {
+        border-top: none !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    .custom-list-container {
+        max-height: 230px !important;
+        height: 230px;
+    }
+    .form-group {
+        margin-bottom: 6px !important;
+    }
+}
+
+/* D-PAD REMOTE FOCUS */
+*:focus {
+    outline: none !important;
+}
+
+.category.is-focused,
+.category:focus {
+    background: rgba(250, 204, 21, 0.85) !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.95) !important;
+    z-index: 9999 !important;
+}
+
+.category.is-focused .category-name,
+.category:focus .category-name {
+    color: #000000 !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+}
+
+.channel.is-focused,
+.channel:focus {
+    background: rgba(250, 204, 21, 0.85) !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 8px 24px rgba(250, 204, 21, 0.95) !important;
+    transform: translateY(-4px) scale(1.05) !important;
+    z-index: 9999 !important;
+}
+
+.channel.is-focused .channel-name,
+.channel:focus .channel-name {
+    color: #000000 !important;
+    font-weight: 900 !important;
+}
+
+.refresh-button-circle:focus,
+.search-button-circle:focus,
+.settings-button-circle:focus,
+.exit-power-button:focus,
+.btn-delete-item:focus {
+    background: rgba(250, 204, 21, 0.85) !important;
+    border: 2px solid #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.95) !important;
+    transform: scale(1.15) !important;
+}
+
+.refresh-button-circle:focus svg,
+.search-button-circle:focus svg,
+.settings-button-circle:focus svg,
+.exit-power-button:focus svg,
+.btn-delete-item:focus svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* SERIES / NETFLIX STYLE VOD LAYOUT */
+.series-layout-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    max-height: calc(100vh - 100px);
+    padding: 6px 12px;
+    box-sizing: border-box;
+    align-items: flex-start;
+}
+
+.series-info-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.series-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.series-meta {
+    font-size: 11px;
+    font-weight: 700;
+    color: #facc15;
+    margin-bottom: 4px;
+}
+
+.series-episodes-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.series-episodes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 130px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.episode-card {
+    width: 44px;
+    height: 44px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid #ff69b4 !important;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.episode-card:hover,
+.episode-card.is-focused,
+.episode-card:focus {
+    background: #facc15 !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.8);
+}
+
+.series-poster-pane {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.series-poster-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid #000000 !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+}
+
+/* ===== OPTIMASI PERFORMANCE ===== */
+/* Kurangi backdrop-filter pada area scroll agar lebih mulus di device rendah */
+#content,
+.category-wrapper,
+.playlist-popup,
+.modal-card {
+
+}
+
+/* Hint browser untuk elemen yang sering diubah */
+.channel {
+    will-change: transform, background;
+}
+
+.channel-list {
+    contain: layout style;
+}
+
+/* Kurangi animasi berlebihan pada device dengan memori terbatas */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <aside id="sidebar">
+        <div class="sidebar-top">
+            <div class="brand">
+                <div class="brand-icon">
+                    <img src="https://bandeltv.xyz/2026/player/new/logowebview.png" alt="Logo" class="brand-img">
+                </div>
+                <div>
+                    <div class="brand-text">BandelGroup</div>
+                    <div class="brand-sub" id="deviceClock">00:00:00</div>
+                </div>
+            </div>
+
+            <div id="portraitSearchContainer" class="portrait-search-container">
+                <button type="button" class="search-button-circle" onclick="togglePortraitSearch()" title="Cari">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <input type="text" id="portraitSearchInput" class="portrait-search-input" placeholder="Cari..." autocomplete="off">
+            </div>
+        </div>
+
+        <div class="category-header-wrap" style="position: relative;">
+            <button type="button" class="category-header-btn" id="playlistToggleBtn" title="Pilih Playlist" tabindex="0" onclick="togglePlaylistPopup(event)">
+                <span class="category-icon-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </span>
+
+                <span class="category-label" id="activePlaylistLabel">H O M E</span>
+
+                <span class="category-icon-right">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </span>
+            </button>
+            <div id="playlistPopup" class="playlist-popup"></div>
+        </div>
+
+        <div id="portraitControlsBar" class="portrait-controls-bar">
+            <button type="button" class="settings-button-circle" onclick="openSettingsModal()" title="Pengaturan Playlist">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c-.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c-.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </button>
+
+            <button type="button" id="portraitYoutubeButton" class="settings-button-circle" onclick="window.location.href='https://bandeltv.xyz/yt/ytplaylist.php'" title="YouTube Playlist" style="background: #dc2626; border-color: #ffffff;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <polygon points="6,4 20,12 6,20"></polygon>
+                </svg>
+            </button>
+
+            <button type="button" class="settings-button-circle" onclick="openMultiView()" title="Multi-View (4 Layar)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </button>
+
+            <button type="button" id="portraitStreamButton" class="settings-button-circle" onclick="openStreamModal()" title="Tambah Stream" style="font-size: 16px;">
+                📡
+            </button>
+
+            <button type="button" id="portraitRefreshButton" class="refresh-button-circle" onclick="refreshPlaylist()" title="Refresh Playlist">
+                <svg class="refresh-svg-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+            </button>
+
+            <button type="button" class="exit-power-button" onclick="exitApplication()" title="Keluar Aplikasi">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="category-wrapper">
+            <div id="categoryList">
+                <div class="state-box">
+                    <div class="state-text">Memuat daftar...</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main id="main">
+        <header class="main-header">
+            <div class="header-left">
+                <h1 id="currentCategory" style="margin: 0;">Playlist</h1>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                    <div class="channel-total" id="channelTotal" style="margin-top: 0;">Memuat channel...</div>
+                    <div id="actualWeatherHeader" onclick="loadActualWeather(true)" title="Klik untuk memperbarui suhu cuaca" style="display: flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 2px 8px; cursor: pointer;">
+                        <span id="weatherTemp" style="font-size: 11px; font-weight: 700; color: #38bdf8;">--°C</span>
+                        <span id="weatherLocation" style="font-size: 10px; color: #94a3b8;">Lokasi...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="headerControls" class="header-controls">
+                <button type="button" id="settingsButton" class="settings-button-circle" onclick="openSettingsModal()" title="Pengaturan Playlist">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c-.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                </button>
+
+                <button type="button" id="multiViewButton" class="settings-button-circle" onclick="openMultiView()" title="Multi-View (4 Layar)">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </button>
+
+                <button type="button" id="youtubeButton" class="settings-button-circle" onclick="window.location.href='https://bandeltv.xyz/yt/ytplaylist.php'" title="YouTube Playlist" style="background: #dc2626; border-color: #ffffff;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <polygon points="6,4 20,12 6,20"></polygon>
+                    </svg>
+                </button>
+
+                <button type="button" id="streamButton" class="settings-button-circle" onclick="openStreamModal()" title="Tambah Stream" style="font-size: 16px;">
+                    📡
+                </button>
+
+                <button type="button" id="refreshButton" class="refresh-button-circle" onclick="refreshPlaylist()" title="Refresh Playlist">
+                    <svg class="refresh-svg-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                    </svg>
+                </button>
+
+                <div id="searchContainer" class="search-container-expand">
+                    <button type="button" id="searchButton" class="search-button-circle" onclick="toggleSearchInput()" title="Cari Channel">
+                        <svg class="search-svg-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <input type="text" id="searchInput" class="search-input-field" placeholder="Cari channel..." autocomplete="off">
+                </div>
+
+                <button type="button" id="powerExitButton" class="exit-power-button" onclick="exitApplication()" title="Keluar Aplikasi">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div id="bmkgBar" class="bmkg-bar">
+            <div class="bmkg-tag">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                BMKG
+            </div>
+            <div class="bmkg-marquee-wrapper">
+                <div class="bmkg-marquee-text" id="bmkgText">Memuat informasi gempa terkini BMKG...</div>
+            </div>
+        </div>
+
+        <section id="content">
+            <div id="channelList">
+                <div class="state-box">
+                    <div class="state-text">Memuat playlist...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL PENGATURAN -->
+    <div id="settingsModal" class="modal-overlay" onclick="closeSettingsModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header-top">
+                <button type="button" onclick="closeSettingsModal()" title="Tutup" style="position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; border:none; background:linear-gradient(135deg, #ff5f5f, #c62828); color:#ffffff; font-size:17px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 0 12px rgba(255, 50, 50, 0.85), inset 0 1px 2px rgba(255,255,255,0.35);">X</button>
+                <h3 class="modal-title">
+                    Pengaturan Playlist
+                </h3>
+            </div>
+
+            <div class="modal-body-split">
+                <div class="modal-col-left">
+                    <div class="form-group">
+                        <label for="languageSelect">Bahasa / Language :</label>
+                        <select id="languageSelect" class="form-input" onchange="changeLanguage(this.value)">
+                            <option value="id">Indonesia</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mode Tampilan :</label>
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" id="btnModeLandscape" class="btn-modal btn-secondary" onclick="setDisplayMode('landscape')" style="flex:1;">Landscape</button>
+                            <button type="button" id="btnModePortrait" class="btn-modal btn-secondary" onclick="setDisplayMode('portrait')" style="flex:1;">Portrait</button>
+                        </div>
+                        <div id="displayModeStatus" style="font-size:12px; color:#9caec5; margin-top:6px;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tampilan Baris Chanel :</label>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="button" class="btn-modal btn-secondary grid-col-btn" onclick="setGridCols(2)" style="flex:1; min-width:40px;">2</button>
+                            <button type="button" class="btn-modal btn-secondary grid-col-btn" onclick="setGridCols(3)" style="flex:1; min-width:40px;">3</button>
+                            <button type="button" class="btn-modal btn-secondary grid-col-btn" onclick="setGridCols(4)" style="flex:1; min-width:40px;">4</button>
+                            <button type="button" class="btn-modal btn-secondary grid-col-btn" onclick="setGridCols(5)" style="flex:1; min-width:40px;">5</button>
+                            <button type="button" class="btn-modal btn-secondary grid-col-btn" onclick="setGridCols(8)" style="flex:1; min-width:40px;">8</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Urutkan Group Title (A-Z) :</label>
+                        <button type="button" id="btnSortGroup" class="btn-modal" onclick="toggleSortGroupAZ()" style="padding: 9px 12px; font-size: 12px; font-weight: 800; background: #171b22; border: 1.5px solid rgba(56, 189, 248, 0.3); color: #ffffff; border-radius: 8px; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
+                            <span>Urut Group</span>
+                            <span id="statusSortGroup" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #64748b; color: #ffffff;">INACTIVE</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Urutkan Name Title Channel (A-Z) :</label>
+                        <button type="button" id="btnSortChannel" class="btn-modal" onclick="toggleSortChannelAZ()" style="padding: 9px 12px; font-size: 12px; font-weight: 800; background: #171b22; border: 1.5px solid rgba(56, 189, 248, 0.3); color: #ffffff; border-radius: 8px; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
+                            <span>urut Channel</span>
+                            <span id="statusSortChannel" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #64748b; color: #ffffff;">INACTIVE</span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="customPlaylistName">Nama Folder :</label>
+                        <input type="text" id="customPlaylistName" class="form-input" placeholder="Ketik nama folder..." autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="customPlaylistUrl">URL :</label>
+                        <input type="text" id="customPlaylistUrl" class="form-input" placeholder="masukan alamt url ....." autocomplete="off">
+                    </div>
+                    <input type="hidden" id="customPlaylistName" value="Playlist">
+
+                    <div class="form-group" style="margin-top: 4px;">
+                        <button type="button" id="settingsSaveButton" class="btn-modal btn-primary" onclick="saveNewPlaylist()" style="width: 100%;">Simpan</button>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 4px;">
+                        <button type="button" class="btn-modal btn-primary" onclick="openM3UFile()" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #2e7d32;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M8 16h8v2H8zM8 12h8v2H8zM14 2H6c-1.1 0-2 0.9-2 2v16c0 1.1 0.89 2 1.99 2H18c1.1 0 2-0.9 2-2V8l-6-6zM18 20H6V4h7v5h5v11z"></path>
+                            </svg>
+                            <span id="btnOpenM3uText">Buka File M3U (.m3u)</span>
+                        </button>
+                    </div>
+                    <input type="file" id="m3uFilePicker" accept=".m3u,.m3u8,.json" style="display:none" onchange="handleM3UFileSelected(event)">
+                </div>
+
+            </div>
+
+            <div class="modal-col-right">
+                <div class="custom-list-header">Daftar Playlist Tersimpan :</div>
+                <div id="customPlaylistItems" class="custom-list-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL STREAM PILIHAN -->
+<div id="streamModal" class="modal-overlay" onclick="closeStreamModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header-top" style="margin-left: 34px;">
+            <button type="button" onclick="closeStreamModal()" title="Tutup" style="position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; border:none; background:linear-gradient(135deg, #ff5f5f, #c62828); color:#ffffff; font-size:17px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 0 12px rgba(255, 50, 50, 0.85), inset 0 1px 2px rgba(255,255,255,0.35);">X</button>
+            <h3 class="modal-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-5 9V7h4l-2 4zm0 0l-2-4h-4l2 4z"/>
+                </svg>
+                Grup Stream
+            </h3>
+        </div>
+
+        <div class="modal-body-split">
+            <div class="modal-col-left">
+                <div id="streamListContainer" style="max-height: 400px; overflow-y: auto;"></div>
+
+                <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div class="form-group">
+                        <label for="streamTitle">Judul Stream Baru :</label>
+                        <input type="text" id="streamTitle" class="form-input" placeholder="Contoh: Trans7 Stream" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streamUA">User-Agent :</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" id="streamUA" class="form-input" placeholder="Contoh: Mozilla/5.0..." autocomplete="off" style="flex:1;">
+                            <button type="button" class="btn-modal btn-secondary" onclick="fillDefaultUA()" style="flex:0 0 auto; min-width:110px;">Pilih UA</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streamReferer">Referer :</label>
+                        <input type="text" id="streamReferer" class="form-input" placeholder="Contoh: https://contoh.com" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streamUrl">URL (m3u8 / flv / mp4) :</label>
+                        <input type="text" id="streamUrl" class="form-input" placeholder="https://contoh.com/stream.m3u8" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streamM3u">Paste M3U Lengkap :</label>
+                        <textarea id="streamM3u" class="form-input" rows="5" placeholder="Paste full M3U entry here..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 4px;">
+                        <button type="button" class="btn-modal btn-secondary" onclick="parseM3uToStream()" style="width: 100%; background: #2e7d32;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                            Parse dari M3U
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-col-right">
+                <div class="custom-list-header">Daftar Stream Tersimpan :</div>
+                <div id="streamSavedList" class="custom-list-container"></div>
+            </div>
+        </div>
+
+        <div class="modal-buttons" style="margin-top: 12px;">
+            <button type="button" class="btn-modal btn-primary" onclick="saveStream()">Simpan ke Stream</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI HAPUS STREAM -->
+<div id="confirmModal" class="modal-overlay" onclick="closeConfirmModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 380px;">
+        <div class="modal-header-top" style="margin-left: 34px;">
+            <h3 class="modal-title">Konfirmasi Hapus</h3>
+        </div>
+        <div style="padding: 20px; text-align: center;">
+            <p id="confirmMessage" style="font-size: 14px; color: #f2f4f7; margin: 0 0 20px 0;">Yakin ingin menghapus stream ini?</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" class="btn-modal btn-secondary" onclick="closeConfirmModal()">Batal</button>
+                <button type="button" class="btn-modal btn-primary" onclick="confirmDeleteYes()">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL POPUP VERIFIKASI KODE VIP ROOM -->
+<div id="vipCodeModal" class="modal-overlay" onclick="closeVipModal(event)">
+    <div class="modal-card" style="max-width: 380px; text-align: center; padding: 25px 20px;" onclick="event.stopPropagation()">
+        <div style="font-size: 20px; font-weight: 900; color: #facc15; margin-bottom: 6px;">
+            🔒 VIP ROOM ACCESS
+        </div>
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 18px;">
+            Masukkan kode aktivasi Anda untuk membuka siaran VIP
+        </div>
+
+        <div id="vipErrorMessage" style="display: none; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 12px; padding: 10px; margin-bottom: 14px; font-weight: bold; line-height: 1.4;"></div>
+
+        <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+            <label style="font-size: 11px; font-weight: 700; color: #cbd5e1;">KODE AKTIVASI :</label>
+            <input type="text" id="vipCodeInput" class="form-input" placeholder="Contoh: AB12CD" maxlength="15" autocomplete="off" style="text-transform: uppercase; font-family: monospace; font-size: 15px; font-weight: bold; letter-spacing: 2px; text-align: center; color: #facc15;">
+        </div>
+
+        <div class="modal-buttons" style="display: flex; gap: 10px;">
+            <button type="button" class="btn-modal btn-secondary" onclick="closeVipModal()">Batal</button>
+            <button type="button" id="btnSubmitVip" class="btn-modal btn-primary" onclick="submitVipCode()" style="background: #0284c7;">Buka Akses</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+async function checkClientSideSniffer() {
+    try {
+        const ports = [8080, 8888, 8118, 1080];
+        for (let port of ports) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 600);
+                await fetch(`http://127.0.0.1:${port}/`, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                triggerClientSideBlock();
+                return;
+            } catch (err) {}
+        }
+    } catch(e) {}
+}
+
+function triggerClientSideBlock() {
+    document.body.innerHTML = `
+        <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0b0d10;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffffff;font-family:Arial;padding:20px;text-align:center;">
+            <div style="background:rgba(239,68,68,0.15);border:2px solid #ef4444;border-radius:16px;padding:30px;max-width:450px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.9);">
+                <h2 style="color:#ef4444;margin-top:0;margin-bottom:15px;font-size:22px;">Peringatan Keamanan ðŸ™</h2>
+                <p style="color:#cbd5e1;font-size:14px;line-height:1.5;margin-bottom:25px;">
+                    Maaf... Penggunaan HTTP Canary, Proxy, atau Packet Sniffer terdeteksi.<br><br>
+                    Aplikasi ini dibangun dengan penuh keringat dan perjuangan. Mohon hargai karya dan kerja keras kami.<br><br>
+                    Silakan matikan aplikasi Sniffer atau Proxy Anda untuk melanjutkan.
+                </p>
+                <button onclick="if(window.Android && window.Android.exitApp) { window.Android.exitApp(); } else { window.close(); }" style="background:#ef4444;color:#ffffff;border:none;padding:12px 24px;font-size:14px;font-weight:bold;border-radius:8px;cursor:pointer;width:100%;">TUTUP APLIKASI</button>
+            </div>
+        </div>
+    `;
+}
+
+const DEFAULT_PLAYLISTS = [
+    {
+      "code": "utama",
+      "name": "H O M E",
+      "url": "https://bandeltv.xyz/2026/player/playlist.m3u",
+      "status": true,
+      "sortn": "1"
+    },
+    {
+      "code": "utama",
+      "name": "NASIONAL",
+      "url": "https://bandeltv.xyz/2026/player/new/kompailerwebview.php",
+      "status": true,
+      "sortn": "1"
+    },
+     {
+      "code": "Movie",
+      "name": "VOD TERBARU",
+      "url": "https://raw.githubusercontent.com/achdibandel-a11y/Movie/refs/heads/main/Movies",
+      "status": true,
+      "sortn": "2"
+    },
+    {
+      "code": "SERIES",
+      "name": "VOD SERIES",
+      "url": "https://raw.githubusercontent.com/achdibandel-a11y/Movie/refs/heads/main/series",
+      "status": true,
+      "sortn": "2"
+    },
+    
+    {
+      "code": "SERIES",
+      "name": "SERIES NETFLIX",
+      "url": "https://raw.githubusercontent.com/achdibandel-a11y/Movie/refs/heads/main/Netflixseries",
+      "status": true,
+      "sortn": "2"
+    },
+    {
+      "code": "STREAM",
+      "name": "STREAM",
+      "url": "internal://stream",
+      "status": true,
+      "sortn": "3"
+    },
+   
+    {
+      "code": "VIP",
+      "name": "VIP ROOM",
+      "url": "https://bandeltv.xyz/2026/player/index.php",
+      "status": true,
+      "sortn": "5"
+    }
+    
+];
+
+let activePlaylistUrl = "";
+let rawM3U = "";
+let playlist = [];
+let categories = {};
+let selectedCategory = "";
+let streamItems = [];
+window.__gridCols = 4;
+
+/* PENGAMBILAN DATA BMKG */
+async function loadBMKGInfo() {
+    const textEl = document.getElementById("bmkgText");
+    if (!textEl) return;
+
+    const bmkgUrl = "https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json";
+    let data = null;
+
+    try {
+        const res = await fetch(bmkgUrl + "?t=" + Date.now());
+        if (res.ok) {
+            data = await res.json();
+        }
+    } catch (e1) {
+        try {
+            const proxy1 = "https://api.allorigins.win/raw?url=" + encodeURIComponent(bmkgUrl);
+            const res1 = await fetch(proxy1);
+            if (res1.ok) {
+                data = await res1.json();
+            }
+        } catch (e2) {
+            try {
+                const proxy2 = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(bmkgUrl);
+                const res2 = await fetch(proxy2);
+                if (res2.ok) {
+                    data = await res2.json();
+                }
+            } catch (e3) {
+                console.error("Gagal memuat API BMKG:", e3);
+            }
+        }
+    }
+
+    if (data && data.Infogempa && data.Infogempa.gempa) {
+        const g = data.Infogempa.gempa;
+        textEl.innerHTML = `
+            <b>GEMPA BUMI TERKINI:</b> 
+            <b>Waktu:</b> <span class="val">${g.Tanggal} - ${g.Jam}</span>
+            <b>Magnitudo:</b> <span class="val">${g.Magnitude} SR</span>
+            <b>Kedalaman:</b> <span class="val">${g.Kedalaman}</span>
+            <b>Pusat Lokasi:</b> <span class="val">${g.Wilayah}</span>
+            <b>Koordinat:</b> <span class="val">${g.Lintang} - ${g.Bujur}</span>
+            <b>Potensi:</b> <span class="val">${g.Potensi}</span>
+            <b>Dirasakan:</b> <span class="val">${g.Dirasakan || '-'}</span>
+        `;
+    } else {
+        textEl.innerHTML = `<b>BMKG:</b> <span class="val">Informasi gempa bumi terkini belum dapat diperbarui.</span>`;
+    }
+}
+
+function getCustomPlaylists() {
+    if (window.Android && typeof window.Android.getCustomPlaylists === "function") {
+        try {
+            let res = window.Android.getCustomPlaylists();
+            return JSON.parse(res);
+        } catch(e) {
+            return [];
+        }
+    }
+    let saved = localStorage.getItem("bandel_custom_playlists");
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch(e) {
+            return [];
+        }
+    }
+    return [];
+}
+
+function saveCustomPlaylistsList(list) {
+    const json = JSON.stringify(list);
+    if (window.Android && typeof window.Android.saveCustomPlaylists === "function") {
+        try {
+            window.Android.saveCustomPlaylists(json);
+        } catch(e) {}
+    }
+    try {
+        localStorage.setItem("bandel_custom_playlists", json);
+    } catch(e) {}
+}
+
+function getAllPlaylists() {
+    return [...DEFAULT_PLAYLISTS, ...getCustomPlaylists()];
+}
+
+function renderSavedList() {
+    const container = document.getElementById("customPlaylistItems");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const customList = getCustomPlaylists();
+    if (customList.length === 0) {
+        container.innerHTML = '<div class="custom-empty">Belum ada playlist yang ditambahkan.</div>';
+        return;
+    }
+
+    customList.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "custom-item";
+
+        const info = document.createElement("div");
+        info.className = "custom-item-info";
+        info.innerHTML = `<div class="custom-item-name">${item.name}</div><div class="custom-item-url">${item.url}</div>`;
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn-delete-item";
+        delBtn.title = "Hapus Playlist";
+        delBtn.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+
+        delBtn.onclick = () => deletePlaylist(item.code);
+
+        div.appendChild(info);
+        div.appendChild(delBtn);
+        container.appendChild(div);
+    });
+}
+
+function deletePlaylist(code) {
+    let customList = getCustomPlaylists();
+    const target = customList.find(p => p.code === code);
+
+    if (target && target.url && target.url.startsWith("file-local://")) {
+        const fileId = target.url.replace("file-local://", "");
+        localStorage.removeItem("bandel_file_content_" + fileId);
+    }
+
+    customList = customList.filter(p => p.code !== code);
+    saveCustomPlaylistsList(customList);
+
+    renderSavedList();
+    initPlaylists();
+
+    if (target && activePlaylistUrl === target.url) {
+        selectPlaylist(DEFAULT_PLAYLISTS[0].url, DEFAULT_PLAYLISTS[0].name);
+    }
+}
+
+function openM3UFile() {
+    if (window.Android && typeof window.Android.openM3UFile === "function") {
+        window.Android.openM3UFile();
+    } else if (window.AppCreator && typeof window.AppCreator.openM3UFile === "function") {
+        window.AppCreator.openM3UFile();
+    } else {
+        const picker = document.getElementById("m3uFilePicker");
+        if (picker) {
+            picker.click();
+        } else {
+            alert("Silakan perbarui APK ke versi terbaru untuk menggunakan fitur Buka File M3U.");
+        }
+    }
+}
+
+function handleM3UFileSelected(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        window.loadM3UContent(text, file.name);
+    };
+    reader.readAsText(file);
+}
+
+window.loadM3UContent = function(text, fileName) {
+    rawM3U = text;
+    parseM3U(rawM3U);
+    groupCategories();
+    renderCategories();
+    if (fileName) {
+        var fileId = "file_" + Date.now();
+        window.localM3uContents = window.localM3uContents || {};
+        window.localM3uContents[fileId] = text;
+        try {
+            localStorage.setItem("bandel_file_content_" + fileId, text);
+        } catch(e) {}
+
+        let customList = getCustomPlaylists();
+        const existingIndex = customList.findIndex(p => p.name === fileName);
+        if (existingIndex !== -1) {
+            customList[existingIndex].playlistData = playlist;
+            customList[existingIndex].content = text;
+        } else {
+            const newPlaylist = {
+                code: fileId,
+                name: fileName,
+                url: "file-local://" + fileId,
+                playlistData: playlist,
+                content: text,
+                status: true,
+                sortn: String(DEFAULT_PLAYLISTS.length + customList.length + 1)
+            };
+            customList.push(newPlaylist);
+        }
+        saveCustomPlaylistsList(customList);
+        if (typeof renderSavedList === "function") renderSavedList();
+        if (typeof initPlaylists === "function") initPlaylists();
+        if (typeof selectPlaylist === "function") {
+            const targetPl = customList.find(p => p.name === fileName);
+            if (targetPl) selectPlaylist(targetPl.url, targetPl.name);
+        }
+    }
+};
+
+const TRANSLATIONS = {
+    id: {
+        settingsTitle: "Pengaturan Playlist",
+        langLabel: "Bahasa / Language :",
+        displayModeLabel: "Mode Tampilan :",
+        displayRowsLabel: "Tampilan Baris Chanel :",
+        folderName: "Grup Titel :",
+        urlLabel: "Nama titel :",
+        openFile: "Buka File M3U (.m3u)",
+        close: "Tutup",
+        save: "Simpan",
+        savedList: "Daftar Playlist Tersimpan :",
+        emptyList: "Belum ada playlist yang ditambahkan."
+    },
+    en: {
+        settingsTitle: "Playlist Settings",
+        langLabel: "Language / Bahasa :",
+        displayModeLabel: "Display Mode:",
+        displayRowsLabel: "Channel Rows:",
+        folderName: "Group Titel:",
+        urlLabel: "Name Titel:",
+        openFile: "Open M3U File (.m3u)",
+        close: "Close",
+        save: "Save",
+        savedList: "Saved Playlists:",
+        emptyList: "No custom playlists added yet."
+    }
+};
+
+function changeLanguage(lang) {
+    localStorage.setItem("bandeltv_lang", lang);
+    applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+    const titleEl = document.querySelector("#settingsModal .modal-title");
+    if (titleEl) {
+        titleEl.textContent = t.settingsTitle;
+    }
+
+    const labels = document.querySelectorAll("#settingsModal label");
+    if (labels.length >= 5) {
+        labels[0].textContent = t.langLabel;
+        labels[1].textContent = t.displayModeLabel;
+        labels[2].textContent = t.displayRowsLabel;
+        labels[3].textContent = t.folderName;
+        labels[4].textContent = t.urlLabel;
+    } else if (labels.length >= 4) {
+        labels[0].textContent = t.langLabel;
+        labels[1].textContent = t.displayModeLabel;
+        labels[2].textContent = t.folderName;
+        labels[3].textContent = t.urlLabel;
+    } else if (labels.length >= 3) {
+        labels[0].textContent = t.langLabel;
+        labels[1].textContent = t.folderName;
+        labels[2].textContent = t.urlLabel;
+    }
+
+    const openM3uTextEl = document.getElementById("btnOpenM3uText");
+    if (openM3uTextEl) openM3uTextEl.textContent = t.openFile;
+
+    const closeBtn = document.querySelector("#settingsModal .modal-buttons .btn-secondary");
+    if (closeBtn) closeBtn.textContent = t.close;
+
+    const saveBtn = document.getElementById("settingsSaveButton");
+    if (saveBtn) saveBtn.textContent = t.save;
+
+    const listHeader = document.querySelector("#settingsModal .custom-list-header");
+    if (listHeader) listHeader.textContent = t.savedList;
+
+    const emptyListEl = document.querySelector("#settingsModal .custom-empty");
+    if (emptyListEl) emptyListEl.textContent = t.emptyList;
+}
+
+function setDisplayMode(mode) {
+    const normalized = (mode === "landscape") ? "landscape" : "portrait";
+    try {
+        if (window.Android && typeof window.Android.setDisplayMode === "function") {
+            window.Android.setDisplayMode(normalized);
+        } else if (window.AppCreator && typeof window.AppCreator.setDisplayMode === "function") {
+            window.AppCreator.setDisplayMode(normalized);
+        }
+    } catch (e) {
+        console.error("setDisplayMode bridge error", e);
+    }
+    localStorage.setItem("bandeltv_display_mode", normalized);
+    updateDisplayModeStatus(normalized);
+}
+
+function updateDisplayModeStatus(mode) {
+    const statusEl = document.getElementById("displayModeStatus");
+    if (statusEl) {
+        statusEl.textContent = "Mode aktif: " + (mode === "landscape" ? "Landscape" : "Portrait");
+    }
+    const btnL = document.getElementById("btnModeLandscape");
+    const btnP = document.getElementById("btnModePortrait");
+    if (btnL) {
+        btnL.style.opacity = (mode === "landscape") ? "1" : "0.6";
+        btnL.style.border = (mode === "landscape") ? "2px solid #facc15" : "none";
+        btnL.style.boxShadow = (mode === "landscape") ? "0 0 10px rgba(250,204,21,0.7)" : "none";
+    }
+    if (btnP) {
+        btnP.style.opacity = (mode === "portrait") ? "1" : "0.6";
+        btnP.style.border = (mode === "portrait") ? "2px solid #facc15" : "none";
+        btnP.style.boxShadow = (mode === "portrait") ? "0 0 10px rgba(250,204,21,0.7)" : "none";
+    }
+}
+
+function setGridCols(n) {
+    try {
+        if (window.Android && typeof window.Android.setGridCols === "function") {
+            window.Android.setGridCols(n);
+        }
+    } catch (e) {}
+    window.__gridCols = n;
+    localStorage.setItem("bandeltv_grid_cols", n);
+    applyGridColsHighlight(n);
+    applyGlobalGridCols(n);
+}
+
+function applyGlobalGridCols(n) {
+    if (!document.getElementById('globalGridStyle')) {
+        var st = document.createElement('style');
+        st.id = 'globalGridStyle';
+        document.head.appendChild(st);
+    }
+    document.getElementById('globalGridStyle').innerHTML = '.channel-list { grid-template-columns: repeat(' + n + ', 1fr) !important; }';
+}
+
+function applyGridColsHighlight(n) {
+    const btns = document.querySelectorAll(".grid-col-btn");
+    btns.forEach(function(b) {
+        const val = parseInt(b.textContent, 10);
+        if (val === n) {
+            b.style.border = "2px solid #facc15";
+            b.style.boxShadow = "0 0 8px rgba(250,204,21,0.6)";
+            b.style.opacity = "1";
+        } else {
+            b.style.border = "none";
+            b.style.boxShadow = "none";
+            b.style.opacity = "0.6";
+        }
+    });
+}
+
+let isGroupSortedAZ = false;
+let isChannelSortedAZ = false;
+
+function toggleSortGroupAZ() {
+    isGroupSortedAZ = !isGroupSortedAZ;
+    const btn = document.getElementById("btnSortGroup");
+    const status = document.getElementById("statusSortGroup");
+    if (btn && status) {
+        if (isGroupSortedAZ) {
+            status.textContent = "ACTIVE";
+            status.style.background = "#22c55e";
+            btn.style.borderColor = "#38bdf8";
+            btn.style.background = "rgba(56, 189, 248, 0.15)";
+            sortGroupTitlesAZ();
+        } else {
+            status.textContent = "INACTIVE";
+            status.style.background = "#64748b";
+            btn.style.borderColor = "rgba(56, 189, 248, 0.3)";
+            btn.style.background = "#171b22";
+            groupCategories();
+            renderCategories();
+        }
+    }
+}
+
+function toggleSortChannelAZ() {
+    isChannelSortedAZ = !isChannelSortedAZ;
+    const btn = document.getElementById("btnSortChannel");
+    const status = document.getElementById("statusSortChannel");
+    if (btn && status) {
+        if (isChannelSortedAZ) {
+            status.textContent = "ACTIVE";
+            status.style.background = "#22c55e";
+            btn.style.borderColor = "#38bdf8";
+            btn.style.background = "rgba(56, 189, 248, 0.15)";
+            sortChannelsAZ();
+        } else {
+            status.textContent = "INACTIVE";
+            status.style.background = "#64748b";
+            btn.style.borderColor = "rgba(56, 189, 248, 0.3)";
+            btn.style.background = "#171b22";
+            if (originalPlaylist && originalPlaylist.length > 0) {
+                playlist = JSON.parse(JSON.stringify(originalPlaylist));
+            }
+            groupCategories();
+            renderCategories();
+        }
+    }
+}
+
+function sortGroupTitlesAZ() {
+    if (!categories || typeof categories !== "object") return;
+    const sortedKeys = Object.keys(categories).sort((a, b) => a.localeCompare(b, 'id', {sensitivity: 'base'}));
+    const newCategories = {};
+    sortedKeys.forEach(k => {
+        newCategories[k] = categories[k];
+    });
+    categories = newCategories;
+    renderCategories();
+}
+
+function sortChannelsAZ() {
+    if (!playlist || !Array.isArray(playlist)) return;
+    playlist.sort((a, b) => (a.name || "").localeCompare(b.name || "", 'id', {sensitivity: 'base'}));
+    groupCategories();
+    renderCategories();
+}
+
+function openSettingsModal() {
+    const modal = document.getElementById("settingsModal");
+    if (!modal) return;
+    const nameInput = document.getElementById("customPlaylistName");
+    const urlInput = document.getElementById("customPlaylistUrl");
+    if (nameInput) nameInput.value = "";
+    if (urlInput) urlInput.value = "";
+
+    const savedLang = localStorage.getItem("bandeltv_lang") || "id";
+    const langSelect = document.getElementById("languageSelect");
+    if (langSelect) langSelect.value = savedLang;
+    applyLanguage(savedLang);
+
+    let currentMode = localStorage.getItem("bandeltv_display_mode") || "portrait";
+    try {
+        if (window.Android && typeof window.Android.getDisplayMode === "function") {
+            currentMode = window.Android.getDisplayMode() || currentMode;
+        }
+    } catch (e) {}
+    updateDisplayModeStatus(currentMode);
+
+    let savedCols = window.__gridCols || 4;
+    try {
+        if (window.Android && typeof window.Android.getGridCols === "function") {
+            const androidCols = window.Android.getGridCols();
+            if (androidCols) savedCols = androidCols;
+        }
+    } catch (e) {}
+    savedCols = parseInt(localStorage.getItem("bandeltv_grid_cols") || savedCols, 10);
+    applyGridColsHighlight(savedCols);
+
+    renderSavedList();
+    modal.classList.add("show");
+}
+
+function closeSettingsModal(e) {
+    const modal = document.getElementById("settingsModal");
+    if (modal) modal.classList.remove("show");
+}
+
+function openStreamModal() {
+    const modal = document.getElementById("streamModal");
+    if (!modal) return;
+    document.getElementById("streamTitle").value = "";
+    document.getElementById("streamUA").value = "";
+    document.getElementById("streamReferer").value = "";
+    document.getElementById("streamUrl").value = "";
+    document.getElementById("streamM3u").value = "";
+    window.__streamDrmLicense = "";
+    window.__streamManifestType = "";
+    window.__streamLogo = "";
+    renderStreamList();
+    modal.classList.add("show");
+}
+
+function renderStreamList() {
+    const container = document.getElementById("streamSavedList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!streamItems || streamItems.length === 0) {
+        container.innerHTML = '<div class="state-box"><div class="state-text">Belum ada stream tersimpan.</div></div>';
+        return;
+    }
+
+    streamItems.forEach(s => {
+        const item = document.createElement("div");
+        item.className = "custom-item";
+        item.style.display = "flex";
+        item.style.alignItems = "center";
+        item.style.justifyContent = "space-between";
+        item.style.gap = "10px";
+        item.style.padding = "8px 10px";
+        item.style.background = "rgba(255,255,255,0.04)";
+        item.style.border = "1px solid rgba(255,255,255,0.08)";
+        item.style.borderRadius = "8px";
+        item.style.marginBottom = "6px";
+
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "stream-info";
+        infoDiv.style.flex = "1";
+        infoDiv.style.minWidth = "0";
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "stream-name";
+        nameDiv.textContent = s.title || "Tanpa Nama";
+        nameDiv.style.fontWeight = "700";
+        nameDiv.style.color = "#f2f4f7";
+        nameDiv.style.whiteSpace = "nowrap";
+        nameDiv.style.overflow = "hidden";
+        nameDiv.style.textOverflow = "ellipsis";
+        infoDiv.appendChild(nameDiv);
+
+        const urlDiv = document.createElement("div");
+        urlDiv.textContent = (s.url || "").length > 40 ? (s.url || "").substring(0, 40) + "..." : (s.url || "");
+        urlDiv.style.fontSize = "11px";
+        urlDiv.style.color = "#94a3b8";
+        urlDiv.style.whiteSpace = "nowrap";
+        urlDiv.style.overflow = "hidden";
+        urlDiv.style.textOverflow = "ellipsis";
+        infoDiv.appendChild(urlDiv);
+
+        const btnGroup = document.createElement("div");
+        btnGroup.style.display = "flex";
+        btnGroup.style.gap = "6px";
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.innerHTML = "&#215;";
+        delBtn.title = "Hapus Stream";
+        delBtn.style.width = "32px";
+        delBtn.style.height = "32px";
+        delBtn.style.borderRadius = "6px";
+        delBtn.style.border = "none";
+        delBtn.style.background = "rgba(239, 68, 68, 0.2)";
+        delBtn.style.color = "#ef4444";
+        delBtn.style.cursor = "pointer";
+        delBtn.style.display = "flex";
+        delBtn.style.alignItems = "center";
+        delBtn.style.justifyContent = "center";
+        delBtn.style.fontWeight = "900";
+        delBtn.onclick = function(e) {
+            e.stopPropagation();
+            deleteStreamItem(s.id);
+        };
+
+        btnGroup.appendChild(delBtn);
+
+        item.appendChild(infoDiv);
+        item.appendChild(btnGroup);
+        container.appendChild(item);
+    });
+}
+
+function closeStreamModal(e) {
+    const modal = document.getElementById("streamModal");
+    if (modal) modal.classList.remove("show");
+}
+
+let pendingDeleteId = null;
+
+function openConfirmModal(id) {
+    pendingDeleteId = id;
+    const modal = document.getElementById("confirmModal");
+    if (modal) modal.classList.add("show");
+}
+
+function closeConfirmModal(e) {
+    const modal = document.getElementById("confirmModal");
+    if (modal) modal.classList.remove("show");
+    pendingDeleteId = null;
+}
+
+function confirmDeleteYes() {
+    if (!pendingDeleteId) {
+        closeConfirmModal();
+        return;
+    }
+    let streams = [];
+    try {
+        streams = JSON.parse(localStorage.getItem("bandeltv_streams") || "[]");
+    } catch (e) {}
+    streams = streams.filter(s => s.id !== pendingDeleteId);
+    const streamsJson = JSON.stringify(streams);
+    localStorage.setItem("bandeltv_streams", streamsJson);
+
+    // Sync to Android SharedPreferences
+    try {
+        if (window.Android && typeof window.Android.saveStreams === "function") {
+            window.Android.saveStreams(streamsJson);
+        } else if (window.AppCreator && typeof window.AppCreator.saveStreams === "function") {
+            window.AppCreator.saveStreams(streamsJson);
+        }
+    } catch (e) {
+        console.error("saveStreams bridge error", e);
+    }
+
+    if (typeof groupCategories === "function") groupCategories();
+    if (typeof renderCategories === "function") renderCategories();
+    if (typeof renderStreamList === "function") renderStreamList();
+
+    closeConfirmModal();
+    pendingDeleteId = null;
+}
+
+function fillDefaultUA() {
+    const defaultUA = "Mozilla/5.0 (Linux; Android 13; Redmi Note 13 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.7103.114 Mobile Safari/537.36";
+    document.getElementById("streamUA").value = defaultUA;
+}
+
+function parseM3uToStream() {
+    const m3u = document.getElementById("streamM3u").value.trim();
+    if (!m3u) {
+        alert("Silakan paste teks M3U terlebih dahulu!");
+        return;
+    }
+
+    const lines = m3u.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+    let title = "";
+    let url = "";
+    let ua = "";
+    let referer = "";
+    let drmLicense = "";
+    let manifestType = "";
+    let logo = "";
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const lower = line.toLowerCase();
+
+        if (lower.indexOf("#extinf:") === 0) {
+            const comma = line.lastIndexOf(",");
+            if (comma !== -1 && comma < line.length - 1) {
+                title = line.substring(comma + 1).trim();
+            }
+            const logoMatch = line.match(/tvg-logo\s*=\s*"([^"]*)"/i);
+            if (logoMatch && logoMatch[1]) {
+                logo = logoMatch[1].trim();
+                window.__streamLogo = logo;
+            }
+        } else if (lower.indexOf("#kodiprop:") === 0) {
+            const prop = line.substring(10).trim();
+            const eq = prop.indexOf("=");
+            if (eq !== -1) {
+                const k = prop.substring(0, eq).trim().toLowerCase();
+                const v = prop.substring(eq + 1).trim();
+                if (k.indexOf("license_key") !== -1) {
+                    drmLicense = v;
+                } else if (k.indexOf("manifest_type") !== -1) {
+                    manifestType = v;
+                }
+            }
+        } else if (lower.indexOf("#extvlcopt:") === 0) {
+            const opt = line.substring(11).trim();
+            const eq = opt.indexOf("=");
+            if (eq !== -1) {
+                const k = opt.substring(0, eq).trim().toLowerCase();
+                const v = opt.substring(eq + 1).trim();
+                if (k === "http-user-agent" || k === "user-agent") ua = v;
+                else if (k === "http-referrer" || k === "referer" || k === "referrer") referer = v;
+            }
+        } else if (!line.startsWith("#")) {
+            url = line;
+        }
+    }
+
+    document.getElementById("streamTitle").value = title || "";
+    document.getElementById("streamUA").value = ua || "";
+    document.getElementById("streamReferer").value = referer || "";
+    document.getElementById("streamUrl").value = url || "";
+
+    // Store DRM/manifest temporarily for saveStream
+    window.__streamDrmLicense = drmLicense || "";
+    window.__streamManifestType = manifestType || "";
+
+    alert("M3U berhasil di-parse! Silakan periksa kembali field di atas.");
+}
+
+function saveStream() {
+    const title = document.getElementById("streamTitle").value.trim();
+    const ua = document.getElementById("streamUA").value.trim();
+    const referer = document.getElementById("streamReferer").value.trim();
+    const url = document.getElementById("streamUrl").value.trim();
+
+    // If URL empty but M3U textarea has content, try to extract URL from it
+    let finalUrl = url;
+    let finalUa = ua;
+    let finalReferer = referer;
+    let finalTitle = title;
+    let finalLogo = window.__streamLogo || "";
+    let finalDrmLicense = window.__streamDrmLicense || "";
+    let finalManifestType = window.__streamManifestType || "";
+
+    if (!finalUrl) {
+        const m3u = document.getElementById("streamM3u").value.trim();
+        if (m3u) {
+            const lines = m3u.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+            for (let i = lines.length - 1; i >= 0; i--) {
+                const l = lines[i];
+                if (!l.startsWith("#")) {
+                    finalUrl = l;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Parse DRM/manifest from textarea if not set
+    if (!finalDrmLicense) {
+        const m3u = document.getElementById("streamM3u").value.trim();
+        if (m3u) {
+            const m3uLower = m3u.toLowerCase();
+            const licMatch = m3u.match(/license_key\s*=\s*\{[^}]+\}/i);
+            if (licMatch) finalDrmLicense = licMatch[0].replace(/license_key\s*=\s*/i, "").trim();
+            const manMatch = m3u.match(/manifest_type\s*=\s*([^\s,}]+)/i);
+            if (manMatch) finalManifestType = manMatch[1].trim();
+        }
+    }
+
+    if (!finalTitle) {
+        alert("Silakan masukkan Judul Stream!");
+        return;
+    }
+    if (!finalUrl) {
+        alert("Silakan masukkan URL stream!");
+        return;
+    }
+
+    // Build params like player: user-agent=...|referer=...|drmLicense=...|drmScheme=...|manifestType=...
+    const params = [];
+    if (finalUa) params.push("user-agent=" + finalUa);
+    if (finalReferer) params.push("referer=" + finalReferer);
+    if (finalDrmLicense) params.push("drmLicense=" + finalDrmLicense);
+    if (finalManifestType) params.push("manifestType=" + finalManifestType);
+    let fullUrl = finalUrl;
+    if (params.length > 0) {
+        fullUrl = finalUrl + "|" + params.join("|");
+    }
+
+    // Load existing streams
+    let streams = [];
+    try {
+        streams = JSON.parse(localStorage.getItem("bandeltv_streams") || "[]");
+    } catch (e) {}
+
+    // Remove duplicate by title+url
+    const exists = streams.find(s => s.title === finalTitle && s.url === fullUrl);
+    if (exists) {
+        alert("Stream dengan judul dan URL sama sudah ada!");
+        return;
+    }
+
+    streams.push({
+        id: "stream_" + Date.now(),
+        title: finalTitle,
+        url: fullUrl,
+        userAgent: finalUa,
+        referer: finalReferer,
+        drmLicense: finalDrmLicense,
+        drmScheme: finalManifestType ? "clearkey" : "",
+        manifestType: finalManifestType,
+        groupName: "Stream",
+        logo: finalLogo
+    });
+    const streamsJson = JSON.stringify(streams);
+    localStorage.setItem("bandeltv_streams", streamsJson);
+
+    // Save to Android SharedPreferences (phone storage)
+    try {
+        if (window.Android && typeof window.Android.saveStreams === "function") {
+            window.Android.saveStreams(streamsJson);
+        } else if (window.AppCreator && typeof window.AppCreator.saveStreams === "function") {
+            window.AppCreator.saveStreams(streamsJson);
+        }
+    } catch (e) {
+        console.error("saveStreams bridge error", e);
+    }
+
+    // Reset form
+    document.getElementById("streamTitle").value = "";
+    document.getElementById("streamUA").value = "";
+    document.getElementById("streamReferer").value = "";
+    document.getElementById("streamUrl").value = "";
+    document.getElementById("streamM3u").value = "";
+    window.__streamDrmLicense = "";
+    window.__streamManifestType = "";
+
+    if (typeof renderStreamList === "function") renderStreamList();
+    closeStreamModal();
+    alert("Stream disimpan di hp (grup Stream)!");
+
+    // Reload playlist categories if possible
+    if (typeof groupCategories === "function") groupCategories();
+    if (typeof renderCategories === "function") renderCategories();
+}
+
+function deleteStreamItem(id) {
+    openConfirmModal(id);
+    return;
+}
+
+window.changeLanguage = changeLanguage;
+
+const CODES_JSON_URL = "https://bandeltv.xyz/2026/player/codes.json";
+
+function getClientDeviceId() {
+    let devId = localStorage.getItem("bandeltv_dev_id");
+    if (!devId) {
+        devId = "DEV-" + Math.random().toString(36).substring(2, 8).toUpperCase() + Date.now().toString(36).slice(-4).toUpperCase();
+        localStorage.setItem("bandeltv_dev_id", devId);
+    }
+    return devId;
+}
+
+let pendingVipPlaylist = null;
+
+async function verifyVipCodeOnline(code) {
+    if (!code) return { valid: false, message: "Silakan masukkan kode aktivasi!" };
+
+    let data = null;
+    const directUrl = CODES_JSON_URL + "?t=" + Date.now();
+
+    try {
+        const res = await fetch(directUrl, { cache: "no-store" });
+        if (res.ok) {
+            data = await res.json();
+        }
+    } catch (e1) {
+        try {
+            const proxy1 = "https://api.allorigins.win/raw?url=" + encodeURIComponent(directUrl);
+            const res1 = await fetch(proxy1);
+            if (res1.ok) data = await res1.json();
+        } catch (e2) {
+            try {
+                const proxy2 = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(directUrl);
+                const res2 = await fetch(proxy2);
+                if (res2.ok) data = await res2.json();
+            } catch (e3) {
+                return { valid: false, message: "Tidak dapat terhubung ke server verifikasi. Coba lagi nanti." };
+            }
+        }
+    }
+
+    if (!Array.isArray(data)) {
+        return { valid: false, message: "Respon server verifikasi tidak valid." };
+    }
+
+    const cleanCode = code.trim().toUpperCase();
+    const item = data.find(c => (c.code || "").trim().toUpperCase() === cleanCode);
+
+    if (!item) {
+        return { valid: false, message: "Kode aktivasi tidak terdaftar / salah!" };
+    }
+
+    if (item.active === false || item.active === 0 || item.active === "false") {
+        return { valid: false, message: "Kode Anda dinonaktifkan" };
+    }
+
+    if (item.expired) {
+        const expTimestamp = new Date(item.expired + " 23:59:59").getTime();
+        if (!isNaN(expTimestamp) && expTimestamp < Date.now()) {
+            return { valid: false, message: "Kode Expired" };
+        }
+    }
+
+    return { valid: true, code: cleanCode, item: item };
+}
+
+function openVipModal(errorMessage) {
+    const modal = document.getElementById("vipCodeModal");
+    const input = document.getElementById("vipCodeInput");
+    const errBox = document.getElementById("vipErrorMessage");
+
+    const savedVipCode = localStorage.getItem("bandeltv_vip_code") || "";
+    if (input) {
+        input.value = savedVipCode;
+    }
+
+    if (errBox) {
+        if (errorMessage) {
+            errBox.textContent = errorMessage;
+            errBox.style.display = "block";
+        } else {
+            errBox.style.display = "none";
+        }
+    }
+
+    if (modal) modal.classList.add("show");
+    setTimeout(() => { if (input) input.focus(); }, 150);
+}
+
+function closeVipModal(e) {
+    const modal = document.getElementById("vipCodeModal");
+    if (modal) modal.classList.remove("show");
+    pendingVipPlaylist = null;
+}
+
+async function submitVipCode() {
+    const input = document.getElementById("vipCodeInput");
+    const errBox = document.getElementById("vipErrorMessage");
+    const btn = document.getElementById("btnSubmitVip");
+    const codeVal = input.value.trim().toUpperCase();
+
+    if (!codeVal) {
+        if (errBox) {
+            errBox.textContent = "Silakan masukkan kode aktivasi!";
+            errBox.style.display = "block";
+        }
+        return;
+    }
+
+    if (btn) btn.textContent = "Memeriksa...";
+    if (errBox) errBox.style.display = "none";
+
+    const verifyResult = await verifyVipCodeOnline(codeVal);
+
+    if (btn) btn.textContent = "Buka Akses";
+
+    if (!verifyResult.valid) {
+        if (errBox) {
+            errBox.textContent = verifyResult.message || "masaactive kode habis";
+            errBox.style.display = "block";
+        }
+        return;
+    }
+
+    localStorage.setItem("bandeltv_vip_code", codeVal);
+    closeVipModal();
+
+    if (pendingVipPlaylist) {
+        const separator = pendingVipPlaylist.url.indexOf("?") !== -1 ? "&" : "?";
+        const targetUrl = pendingVipPlaylist.url + separator + "key=" + encodeURIComponent(codeVal) + "&device=" + encodeURIComponent(getClientDeviceId());
+        selectPlaylist(targetUrl, pendingVipPlaylist.name);
+    }
+}
+
+async function saveNewPlaylist() {
+    const nameInput = document.getElementById("customPlaylistName").value.trim();
+    let urlInput = document.getElementById("customPlaylistUrl").value.trim();
+
+    if (!nameInput) {
+        alert("Silakan masukkan nama folder!");
+        return;
+    }
+    if (!urlInput) {
+        alert("Silakan masukkan URL m3u yang valid!");
+        return;
+    }
+
+    let parsedChannels = [];
+    try {
+        let text = await fetchM3uRaw(urlInput);
+        let oldPlaylist = playlist;
+        playlist = [];
+        parseM3U(text);
+        playlist.forEach(item => {
+            if (!item.group || item.group === "Lainnya") {
+                item.group = nameInput;
+            }
+        });
+        parsedChannels = playlist;
+        playlist = oldPlaylist;
+    } catch(e) {}
+
+    let customList = getCustomPlaylists();
+    const existingIndex = customList.findIndex(p => p.name === nameInput || p.url === urlInput);
+    if (existingIndex !== -1) {
+        customList[existingIndex].name = nameInput;
+        customList[existingIndex].url = urlInput;
+        if (parsedChannels.length > 0) {
+            customList[existingIndex].playlistData = parsedChannels;
+        }
+    } else {
+        const newPlaylist = {
+            code: "custom_" + Date.now(),
+            name: nameInput,
+            url: urlInput,
+            playlistData: parsedChannels,
+            status: true,
+            sortn: String(DEFAULT_PLAYLISTS.length + customList.length + 1)
+        };
+        customList.push(newPlaylist);
+    }
+    saveCustomPlaylistsList(customList);
+
+    document.getElementById("customPlaylistName").value = "";
+    document.getElementById("customPlaylistUrl").value = "";
+
+    renderSavedList();
+    initPlaylists();
+    const latestList = getCustomPlaylists();
+    const savedPl = latestList.find(p => p.name === nameInput || p.url === urlInput);
+    if (savedPl) {
+        selectPlaylist(savedPl.url, savedPl.name);
+    }
+    closeSettingsModal();
+}
+
+function cleanM3uText(text) {
+    if (!text) return "";
+    let str = text;
+
+    try {
+        str = str.normalize("NFC");
+    } catch(e) {}
+
+    const entities = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#039;': "'",
+        '&#39;': "'",
+        '&apos;': "'",
+        '&nbsp;': ' '
+    };
+    str = str.replace(/&(?:amp|lt|gt|quot|#039|#39|apos|nbsp);/g, match => entities[match] || match);
+    str = str.replace(/^\uFEFF/, '').replace(/\uFFFD/g, '');
+
+    return str.trim();
+}
+
+function exitApplication() {
+    if (window.Android && typeof window.Android.exitApp === "function") {
+        window.Android.exitApp();
+    } else if (window.Android && typeof window.Android.closeApp === "function") {
+        window.Android.closeApp();
+    } else if (window.AppCreator && typeof window.AppCreator.exit === "function") {
+        window.AppCreator.exit();
+    } else {
+        window.close();
+    }
+}
+
+function togglePlaylistPopup(e) {
+    if (e) e.stopPropagation();
+    const popup = document.getElementById("playlistPopup");
+    if (!popup) return;
+
+    popup.classList.toggle("show");
+    if (popup.classList.contains("show")) {
+        const activeItem = popup.querySelector('.playlist-item.active') || popup.querySelector('.playlist-item');
+        if (activeItem) activeItem.focus();
+    }
+}
+
+document.addEventListener("click", function(e) {
+    const popup = document.getElementById("playlistPopup");
+    const btn = document.getElementById("playlistToggleBtn");
+    if (popup && popup.classList.contains("show")) {
+        if (!popup.contains(e.target) && !btn.contains(e.target)) {
+            popup.classList.remove("show");
+        }
+    }
+});
+
+async function selectPlaylist(url, name) {
+    const all = getAllPlaylists();
+    const targetPl = all.find(p => p.url === url || p.name === name);
+
+    if (targetPl && targetPl.code && targetPl.code.toUpperCase() === "VIP") {
+        const savedVipCode = localStorage.getItem("bandeltv_vip_code");
+
+        if (!savedVipCode) {
+            pendingVipPlaylist = targetPl;
+            openVipModal();
+            return;
+        }
+
+        const check = await verifyVipCodeOnline(savedVipCode);
+        if (!check.valid) {
+            pendingVipPlaylist = targetPl;
+            openVipModal(check.message || "masaactive kode habis");
+            return;
+        }
+
+        const separator = targetPl.url.indexOf("?") !== -1 ? "&" : "?";
+        url = targetPl.url + separator + "key=" + encodeURIComponent(savedVipCode) + "&device=" + encodeURIComponent(getClientDeviceId());
+    }
+
+    activePlaylistUrl = url;
+    const labelEl = document.getElementById('activePlaylistLabel');
+    if (labelEl) labelEl.textContent = name;
+
+    const popup = document.getElementById("playlistPopup");
+    if (popup) popup.classList.remove("show");
+
+    selectedCategory = "";
+    document.getElementById("channelList").innerHTML = '<div class="state-box"><div class="state-text">Memuat playlist...</div></div>';
+    document.getElementById("categoryList").innerHTML = '<div class="state-box"><span class="state-icon">⏳</span><span class="state-text">Memuat daftar...</span></div>';
+    document.getElementById("currentCategory").textContent = name;
+    document.getElementById("channelTotal").textContent = "Memuat channel...";
+
+    if (url === "internal://stream") {
+        // Load saved streams as regular channel list (not modal popup)
+        playlist = [];
+        if (streamItems && streamItems.length > 0) {
+            streamItems.forEach(s => {
+                const params = [];
+                if (s.userAgent) params.push("user-agent=" + s.userAgent);
+                if (s.referer) params.push("referer=" + s.referer);
+                if (s.drmLicense) params.push("drmLicense=" + s.drmLicense);
+                if (s.drmScheme) params.push("drmScheme=" + s.drmScheme);
+                if (s.manifestType) params.push("manifestType=" + s.manifestType);
+                let fullUrl = s.url;
+                if (params.length > 0) {
+                    fullUrl = s.url + "|" + params.join("|");
+                }
+                playlist.push({
+                    name: s.title || "Tanpa Nama",
+                    group: "Stream",
+                    logo: s.logo || "",
+                    url: fullUrl,
+                    referer: s.referer || "",
+                    userAgent: s.userAgent || "",
+                    drmScheme: s.drmScheme || "",
+                    drmLicense: s.drmLicense || "",
+                    manifestType: s.manifestType || ""
+                });
+            });
+        }
+        groupCategories();
+        renderCategories();
+        selectCategory("Stream");
+        return;
+    }
+
+    if (url && url.startsWith("file-local://")) {
+        const customList = getCustomPlaylists();
+        const found = customList.find(p => p.url === url);
+        if (found && found.playlistData && found.playlistData.length > 0) {
+            playlist = found.playlistData;
+            groupCategories();
+            renderCategories();
+            return;
+        }
+    }
+
+    loadPlaylist();
+}
+
+function initPlaylists() {
+    const popup = document.getElementById("playlistPopup");
+    if (!popup) return;
+    popup.innerHTML = "";
+
+    if (!popup.hasAttribute("data-touch-bound")) {
+        popup.setAttribute("data-touch-bound", "true");
+        popup.addEventListener("touchstart", function(e) {
+            e.stopPropagation();
+        }, {passive: true});
+        popup.addEventListener("touchmove", function(e) {
+            e.stopPropagation();
+        }, {passive: true});
+    }
+
+    const all = getAllPlaylists();
+    const activeList = all.filter(p => p.status).sort((a, b) => parseInt(a.sortn) - parseInt(b.sortn));
+
+    if(!activePlaylistUrl && activeList.length > 0) {
+        activePlaylistUrl = activeList[0].url;
+        const labelEl = document.getElementById('activePlaylistLabel');
+        if (labelEl) labelEl.textContent = activeList[0].name;
+    }
+
+    activeList.forEach((pl) => {
+        const div = document.createElement("div");
+        div.className = "playlist-item";
+        if (activePlaylistUrl === pl.url) div.classList.add("active");
+
+        div.textContent = pl.name;
+        div.tabIndex = 0;
+
+        div.onclick = (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
+            div.classList.add('active');
+            selectPlaylist(pl.url, pl.name);
+        };
+
+        div.onkeydown = (e) => {
+            if (e.key === "Enter" || e.keyCode === 13 || e.keyCode === 23) {
+                div.click();
+            } else if (e.key === "ArrowDown" || e.keyCode === 40) {
+                e.preventDefault();
+                if (div.nextElementSibling) div.nextElementSibling.focus();
+            } else if (e.key === "ArrowUp" || e.keyCode === 38) {
+                e.preventDefault();
+                if (div.previousElementSibling) div.previousElementSibling.focus();
+            } else if (e.key === "Escape" || e.keyCode === 27 || e.keyCode === 4) {
+                popup.classList.remove("show");
+                document.getElementById("playlistToggleBtn").focus();
+            }
+        };
+
+        popup.appendChild(div);
+    });
+}
+
+function fetchM3uRaw(targetUrl) {
+    return new Promise(function(resolve, reject) {
+        if (targetUrl && (targetUrl.startsWith("asset://") || targetUrl.startsWith("assets://"))) {
+            try {
+                const fileName = targetUrl.replace(/^assets?:\/\//, "");
+                if (window.Android && typeof window.Android.getAssetPlaylist === "function") {
+                    const content = window.Android.getAssetPlaylist(fileName);
+                    if (content) {
+                        resolve(content);
+                        return;
+                    }
+                }
+                if (window.AppCreator && typeof window.AppCreator.getAssetPlaylist === "function") {
+                    const content = window.AppCreator.getAssetPlaylist(fileName);
+                    if (content) {
+                        resolve(content);
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn("Asset read error:", e);
+            }
+        }
+        if (targetUrl && targetUrl.startsWith("file-local://")) {
+            try {
+                const fileId = targetUrl.replace("file-local://", "");
+                if (window.localM3uContents && window.localM3uContents[fileId]) {
+                    resolve(window.localM3uContents[fileId]);
+                    return;
+                }
+                const storedContent = localStorage.getItem("bandel_file_content_" + fileId);
+                if (storedContent) {
+                    window.localM3uContents = window.localM3uContents || {};
+                    window.localM3uContents[fileId] = storedContent;
+                    resolve(storedContent);
+                    return;
+                }
+                const customList = getCustomPlaylists();
+                const found = customList.find(p => p.url === targetUrl);
+                if (found && found.content) {
+                    resolve(found.content);
+                    return;
+                }
+                if (found && found.playlistData && found.playlistData.length > 0) {
+                    resolve("HAS_DATA");
+                    return;
+                }
+                reject(new Error("Local file content not found."));
+            } catch(e) {
+                reject(e);
+            }
+            return;
+        }
+        if (targetUrl && targetUrl.startsWith("data:")) {
+            try {
+                const base64Data = targetUrl.split(',')[1];
+                const decoded = decodeURIComponent(escape(atob(base64Data)));
+                resolve(decoded);
+            } catch(e) {
+                reject(e);
+            }
+            return;
+        }
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", targetUrl, true);
+        xhr.responseType = "arraybuffer";
+        xhr.timeout = 10000;
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const buffer = xhr.response;
+                        const decoder = new TextDecoder("utf-8");
+                        const text = decoder.decode(buffer);
+                        resolve(text);
+                    } catch(err) {
+                        reject(err);
+                    }
+                } else {
+                    reject(new Error("HTTP Error " + xhr.status));
+                }
+            }
+        };
+
+        xhr.ontimeout = function() {
+            reject(new Error("Timeout"));
+        };
+
+        xhr.onerror = function() {
+            reject(new Error("Network Error / CORS Blocked"));
+        };
+
+        xhr.send();
+    });
+}
+
+async function loadPlaylist() {
+    if (!activePlaylistUrl) return;
+
+    const cleanUrl = activePlaylistUrl.trim();
+
+    if (cleanUrl.startsWith("file-local://")) {
+        const customList = getCustomPlaylists();
+        const found = customList.find(p => p.url === cleanUrl);
+        if (found && found.playlistData && found.playlistData.length > 0) {
+            playlist = found.playlistData;
+            groupCategories();
+            renderCategories();
+            return;
+        }
+        try {
+            const raw = await fetchM3uRaw(cleanUrl);
+            if (raw && raw !== "HAS_DATA") {
+                rawM3U = raw;
+                parseM3U(rawM3U);
+                groupCategories();
+                renderCategories();
+                return;
+            }
+        } catch (e) {
+            console.warn("M3U lokal tidak dapat diparse ulang:", e);
+        }
+    }
+
+    let content = "";
+    if (cleanUrl.startsWith("data:")) {
+        try {
+            content = await fetchM3uRaw(cleanUrl);
+        } catch (e) {
+            showLoadError();
+            return;
+        }
+    } else if (!cleanUrl.startsWith("file-local://")) {
+        try {
+            const separator = cleanUrl.indexOf('?') !== -1 ? '&' : '?';
+            const directUrl = cleanUrl + separator + "t=" + new Date().getTime();
+            content = await fetchM3uRaw(directUrl);
+        } catch (e1) {
+            try {
+                const proxyUrl1 = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(cleanUrl);
+                content = await fetchM3uRaw(proxyUrl1);
+            } catch (e2) {
+                try {
+                    const proxyUrl2 = "https://api.allorigins.win/raw?url=" + encodeURIComponent(cleanUrl);
+                    content = await fetchM3uRaw(proxyUrl2);
+                } catch (e3) {
+                    showLoadError();
+                    return;
+                }
+            }
+        }
+    }
+
+    if (content && (content.includes("#EXTINF") || content.includes("#EXTM3U") || content.includes("http"))) {
+        rawM3U = content;
+        parseM3U(rawM3U);
+        groupCategories();
+        renderCategories();
+    } else if (!cleanUrl.startsWith("file-local://")) {
+        if (activePlaylistUrl.includes("/player/index.php")) {
+            const all = getAllPlaylists();
+            pendingVipPlaylist = all.find(p => p.code && p.code.toUpperCase() === "VIP");
+            
+            const savedVipCode = localStorage.getItem("bandeltv_vip_code") || "";
+            verifyVipCodeOnline(savedVipCode).then(res => {
+                openVipModal(res.message || "Akses VIP Gagal Dimuat");
+            });
+        }
+        showLoadError();
+    }
+}
+
+function showLoadError() {
+    var catList = document.getElementById("categoryList");
+    if (catList) catList.innerHTML = '<div class="state-box"><span class="state-icon">!</span><span class="state-text">Gagal memuat playlist</span></div>';
+    var chList = document.getElementById("channelList");
+    if (chList) chList.innerHTML = '<div class="state-box"><div class="state-icon">!</div><div class="state-text">Playlist tidak dapat diakses atau diblokir CORS</div></div>';
+    var chTot = document.getElementById("channelTotal");
+    if (chTot) chTot.textContent = "Gagal memuat";
+}
+
+function parseM3U(text) {
+    playlist = [];
+    if (!text) return;
+
+    if (text.charCodeAt(0) === 0xFEFF) {
+        text = text.substring(1);
+    }
+
+    const lines = text.split(/\r?\n/).map(l => l.trim());
+    let currentItem = null;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line) continue;
+
+        if (line.indexOf("#EXTINF:") === 0) {
+            if (currentItem && currentItem.url) {
+                playlist.push(currentItem);
+            }
+            currentItem = {
+                name: "Tanpa Nama",
+                group: "Lainnya",
+                logo: "",
+                url: "",
+                referer: "",
+                userAgent: "",
+                drmScheme: "",
+                drmLicense: "",
+                manifestType: ""
+            };
+
+            const comma = line.indexOf(",");
+            if (comma !== -1) {
+                currentItem.name = cleanM3uText(line.substring(comma + 1)) || "Tanpa Nama";
+            }
+
+            const groupMatch = line.match(/group-title\s*=\s*"([^"]*)"/i);
+            if (groupMatch) {
+                currentItem.group = cleanM3uText(groupMatch[1]) || "Lainnya";
+            }
+
+            const logoMatch = line.match(/tvg-logo\s*=\s*"([^"]*)"/i);
+            if (logoMatch) {
+                currentItem.logo = logoMatch[1].trim();
+            }
+
+            const uaInline = line.match(/(?:http-user-agent|user-agent)\s*=\s*"([^"]*)"/i);
+            if (uaInline && uaInline[1]) {
+                currentItem.userAgent = uaInline[1].trim();
+            }
+
+            const refInline = line.match(/(?:http-referrer|http-referer|referer)\s*=\s*"([^"]*)"/i);
+            if (refInline && refInline[1]) {
+                currentItem.referer = refInline[1].trim();
+            }
+
+            continue;
+        }
+
+        if (!currentItem) continue;
+
+        const lower = line.toLowerCase();
+
+        if (lower.indexOf("#extvlcopt:") === 0) {
+            const opt = line.substring(11).trim();
+            const eq = opt.indexOf("=");
+            if (eq !== -1) {
+                const k = opt.substring(0, eq).trim().toLowerCase();
+                const v = opt.substring(eq + 1).trim();
+                if (k === "http-user-agent" || k === "user-agent") {
+                    currentItem.userAgent = v;
+                } else if (k === "http-referrer" || k === "http-referer" || k === "referer") {
+                    currentItem.referer = v;
+                }
+            } else if (opt) {
+                currentItem.userAgent = opt;
+            }
+            continue;
+        }
+
+        if (lower.indexOf("#kodiprop:") === 0) {
+            const prop = line.substring(10).trim();
+            const eqProp = prop.indexOf("=");
+            if (eqProp !== -1) {
+                const kProp = prop.substring(0, eqProp).trim().toLowerCase();
+                const vProp = prop.substring(eqProp + 1).trim();
+                if (kProp.indexOf("license_key") !== -1) {
+                    currentItem.drmLicense = vProp;
+                } else if (kProp.indexOf("license_type") !== -1) {
+                    currentItem.drmScheme = vProp;
+                } else if (kProp.indexOf("manifest_type") !== -1) {
+                    currentItem.manifestType = vProp;
+                } else if (kProp.indexOf("stream_headers") !== -1 || kProp.indexOf("referer") !== -1) {
+                    const refMatch = vProp.match(/referer=([^,;&]+)/i);
+                    if (refMatch && refMatch[1]) {
+                        currentItem.referer = refMatch[1].trim();
+                    } else if (vProp.indexOf("http") === 0) {
+                        currentItem.referer = vProp;
+                    }
+                }
+            }
+            continue;
+        }
+
+        if (lower.indexOf("#exthttp:") === 0) {
+            const jsonStr = line.substring(9).trim();
+            try {
+                const uaMatch = jsonStr.match(/"(?:User-Agent|user-agent)"\s*:\s*"((?:[^"\\]|\\.)*)"/i);
+                if (uaMatch && uaMatch[1]) {
+                    currentItem.userAgent = uaMatch[1].trim();
+                } else {
+                    const jsonObj = JSON.parse(jsonStr);
+                    if (jsonObj["User-Agent"] || jsonObj["user-agent"]) {
+                        currentItem.userAgent = jsonObj["User-Agent"] || jsonObj["user-agent"];
+                    }
+                }
+            } catch(e) {
+                const uaMatch2 = jsonStr.match(/"User-Agent"\s*:\s*"([^"]*)"/i) || jsonStr.match(/"user-agent"\s*:\s*"([^"]*)"/i);
+                if (uaMatch2 && uaMatch2[1]) {
+                    currentItem.userAgent = uaMatch2[1].trim();
+                }
+            }
+            continue;
+        }
+
+        if (line.indexOf("#") !== 0) {
+            currentItem.url = line;
+            playlist.push(currentItem);
+            currentItem = null;
+        }
+    }
+
+    if (currentItem && currentItem.url) {
+        playlist.push(currentItem);
+    }
+}
+
+function groupCategories() {
+    categories = {};
+    playlist.forEach(item => {
+        const group = item.group || "Lainnya";
+        if (!categories[group]) categories[group] = [];
+        categories[group].push(item);
+    });
+
+    // Muat stream ke variabel terpisah (tidak dimasukkan ke kategori utama)
+    streamItems = [];
+    try {
+        if (window.Android && typeof window.Android.getStreams === "function") {
+            const androidStreams = window.Android.getStreams();
+            if (androidStreams && androidStreams !== "[]") {
+                streamItems = JSON.parse(androidStreams);
+            }
+        } else if (window.AppCreator && typeof window.AppCreator.getStreams === "function") {
+            const androidStreams = window.AppCreator.getStreams();
+            if (androidStreams && androidStreams !== "[]") {
+                streamItems = JSON.parse(androidStreams);
+            }
+        }
+    } catch (e) {}
+    if (!streamItems || streamItems.length === 0) {
+        try {
+            streamItems = JSON.parse(localStorage.getItem("bandeltv_streams") || "[]");
+        } catch (e) {}
+    }
+
+    if (window.Android && typeof window.Android.setChannelsCache === "function") {
+        try {
+            let allCh = [];
+            for (let g in categories) {
+                if (categories[g]) allCh = allCh.concat(categories[g]);
+            }
+            window.Android.setChannelsCache(JSON.stringify(allCh));
+        } catch(e) {}
+    }
+}
+
+function renderCategories() {
+    const list = document.getElementById("categoryList");
+    if (!list) return;
+    list.innerHTML = "";
+
+    const keys = Object.keys(categories);
+    if (keys.length === 0) {
+        list.innerHTML = '<div class="state-box"><div class="state-text">Kategori kosong</div></div>';
+        return;
+    }
+
+    // Tampilkan semua kategori termasuk Stream
+    const visibleKeys = keys;
+
+    if (visibleKeys.length === 0) {
+        list.innerHTML = '<div class="state-box"><div class="state-text">Kategori kosong</div></div>';
+        return;
+    }
+
+    visibleKeys.forEach((key, index) => {
+        const item = document.createElement("div");
+        item.className = "category";
+
+        if (index === 0 && !selectedCategory) {
+            selectedCategory = key;
+            item.classList.add("active");
+        } else if (selectedCategory === key) {
+            item.classList.add("active");
+        }
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "category-name";
+        nameDiv.textContent = key;
+        item.appendChild(nameDiv);
+
+        item.setAttribute("tabindex", "0");
+
+        item.onclick = function() {
+            document.querySelectorAll(".category").forEach(function(el) {
+                el.classList.remove("active");
+            });
+            item.classList.add("active");
+            selectCategory(key);
+        };
+
+        item.onkeydown = function(e) {
+            if (e.key === "Enter" || e.keyCode === 13 || e.keyCode === 23) {
+                item.click();
+            }
+        };
+
+        list.appendChild(item);
+    });
+
+    if (selectedCategory && categories[selectedCategory]) {
+        selectCategory(selectedCategory);
+    } else if (visibleKeys.length > 0) {
+        selectCategory(visibleKeys[0]);
+    }
+}
+
+function isSeriesPlaylist() {
+    const all = getAllPlaylists();
+    const current = all.find(p => p.url === activePlaylistUrl);
+    return current && current.code && current.code.toUpperCase() === "SERIES";
+}
+
+function showSeriesView(seriesName, episodes) {
+    const container = document.getElementById("channelList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!episodes || episodes.length === 0) {
+        container.innerHTML = '<div class="state-box"><div class="state-text">Tidak ada episode</div></div>';
+        return;
+    }
+
+    let posterUrl = "";
+    const epWithLogo = episodes.find(e => e.logo);
+    if (epWithLogo) posterUrl = epWithLogo.logo;
+
+    const containerDiv = document.createElement("div");
+    containerDiv.className = "series-layout-container";
+
+    const infoPane = document.createElement("div");
+    infoPane.className = "series-info-pane";
+
+    const titleH1 = document.createElement("h1");
+    titleH1.className = "series-title";
+    titleH1.textContent = seriesName;
+
+    const metaDiv = document.createElement("div");
+    metaDiv.className = "series-meta";
+    metaDiv.textContent = `â˜… ${episodes.length} Episode | VOD Series`;
+
+    const epTitleDiv = document.createElement("div");
+    epTitleDiv.className = "series-episodes-title";
+    epTitleDiv.textContent = "DAFTAR EPISODE";
+
+    const gridDiv = document.createElement("div");
+    gridDiv.className = "series-episodes-grid";
+
+    episodes.forEach((ep, idx) => {
+        const card = document.createElement("div");
+        card.className = "episode-card";
+        card.setAttribute("tabindex", "0");
+
+        let epNum = String(idx + 1);
+        const match = ep.name.match(/episode\s*(\d+)/i);
+        if (match && match[1]) {
+            epNum = match[1];
+        }
+        card.textContent = epNum;
+        card.title = ep.name;
+
+        card.onclick = function() {
+            playChannel(ep);
+        };
+
+        card.onkeydown = function(e) {
+            if (e.key === "Enter" || e.keyCode === 13 || e.keyCode === 23) {
+                card.click();
+            }
+        };
+
+        gridDiv.appendChild(card);
+    });
+
+    infoPane.appendChild(titleH1);
+    infoPane.appendChild(metaDiv);
+    infoPane.appendChild(epTitleDiv);
+    infoPane.appendChild(gridDiv);
+
+    const posterPane = document.createElement("div");
+    posterPane.className = "series-poster-pane";
+
+    if (posterUrl) {
+        const img = document.createElement("img");
+        img.className = "series-poster-img";
+        img.src = posterUrl;
+        img.alt = seriesName;
+        posterPane.appendChild(img);
+    }
+
+    containerDiv.appendChild(infoPane);
+    containerDiv.appendChild(posterPane);
+    container.appendChild(containerDiv);
+}
+
+function selectCategory(name) {
+    selectedCategory = name;
+    const titleEl = document.getElementById("currentCategory");
+    titleEl.textContent = name;
+
+    if (name.length > 25) {
+        titleEl.style.fontSize = "13px";
+    } else if (name.length > 18) {
+        titleEl.style.fontSize = "15px";
+    } else if (name.length > 12) {
+        titleEl.style.fontSize = "17px";
+    } else {
+        titleEl.style.fontSize = "20px";
+    }
+
+    const items = categories[name] || [];
+    document.getElementById("channelTotal").textContent = items.length + (isSeriesPlaylist() ? " episode" : " channel");
+
+    if (isSeriesPlaylist()) {
+        showSeriesView(name, items);
+    } else {
+        showChannels(items);
+    }
+}
+
+function showChannels(items) {
+    const container = document.getElementById("channelList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!items || items.length === 0) {
+        container.innerHTML = '<div class="state-box"><div class="state-text">Tidak ada channel</div></div>';
+        return;
+    }
+
+    const list = document.createElement("div");
+    list.className = "channel-list";
+    let savedCols = window.__gridCols || 4;
+    try {
+        if (window.Android && typeof window.Android.getGridCols === "function") {
+            const androidCols = window.Android.getGridCols();
+            if (androidCols) savedCols = androidCols;
+        }
+    } catch (e) {}
+    savedCols = parseInt(localStorage.getItem("bandeltv_grid_cols") || savedCols, 10);
+    list.style.gridTemplateColumns = "repeat(" + savedCols + ", 1fr)";
+
+    items.forEach(item => {
+        const channel = document.createElement("div");
+        channel.className = "channel";
+
+        const logoWrap = document.createElement("div");
+        logoWrap.className = "channel-logo-wrap";
+
+        if (item.logo) {
+            const img = document.createElement("img");
+            img.className = "channel-logo";
+            img.src = item.logo;
+            img.loading = "lazy";
+            img.onerror = function() {
+                logoWrap.innerHTML = '<div class="channel-logo-fallback">TV</div>';
+            };
+            logoWrap.appendChild(img);
+        } else {
+            logoWrap.innerHTML = '<div class="channel-logo-fallback">TV</div>';
+        }
+
+        const info = document.createElement("div");
+        info.className = "channel-info";
+
+        const name = document.createElement("div");
+        name.className = "channel-name";
+        name.textContent = item.name;
+
+        info.appendChild(name);
+
+        // Tombol hapus hanya untuk item Stream (bukan channel dari playlist)
+        if (item.isStream) {
+            const delBtn = document.createElement("button");
+            delBtn.type = "button";
+            delBtn.className = "channel-delete-btn";
+            delBtn.title = "Hapus Stream";
+            delBtn.innerHTML = "&#215;";
+            delBtn.onclick = function(e) {
+                e.stopPropagation();
+                deleteStreamItem(item.streamId);
+            };
+            info.appendChild(delBtn);
+        }
+
+        channel.appendChild(logoWrap);
+        channel.appendChild(info);
+
+        channel.setAttribute("tabindex", "0");
+
+        channel.onclick = function() {
+            playChannel(item);
+        };
+
+        channel.onkeydown = function(e) {
+            if (e.key === "Enter" || e.keyCode === 13 || e.keyCode === 23) {
+                channel.click();
+            }
+        };
+
+        list.appendChild(channel);
+    });
+
+    container.appendChild(list);
+}
+
+function toggleSearchInput() {
+    const container = document.getElementById("searchContainer");
+    const input = document.getElementById("searchInput");
+    if (!container) return;
+
+    if (container.classList.contains("open")) {
+        container.classList.remove("open");
+    } else {
+        container.classList.add("open");
+        if (input) input.focus();
+    }
+}
+
+let searchDebounceTimer = null;
+document.getElementById("searchInput").addEventListener("input", function() {
+    const keyword = this.value.trim().toLowerCase();
+    if (!selectedCategory) return;
+    const items = categories[selectedCategory] || [];
+
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+        if (!keyword) {
+            showChannels(items);
+            document.getElementById("channelTotal").textContent = items.length + " channel";
+            return;
+        }
+
+        const filtered = items.filter(item => item.name.toLowerCase().includes(keyword));
+        showChannels(filtered);
+        document.getElementById("channelTotal").textContent = filtered.length + " hasil pencarian";
+    }, 300);
+});
+
+function playChannel(item) {
+    if (!item || !item.url) return;
+
+    let fullUrl = item.url;
+    let params = [];
+
+    if (item.userAgent) params.push("user-agent=" + item.userAgent);
+    if (item.referer) params.push("referer=" + item.referer);
+    if (item.drmLicense) params.push("drmLicense=" + item.drmLicense);
+    if (item.drmScheme) params.push("drmScheme=" + item.drmScheme);
+    if (item.manifestType) params.push("manifestType=" + item.manifestType);
+
+    if (params.length > 0) {
+        fullUrl = fullUrl + "|" + params.join("|");
+    }
+
+    const groupName = selectedCategory || item.group || "Lainnya";
+    const groupItems = (typeof categories !== "undefined" && categories[groupName]) ? categories[groupName] : [item];
+    let jsonStr = "";
+    try {
+        jsonStr = JSON.stringify(groupItems.map(ch => {
+            let chParams = [];
+            if (ch.userAgent) chParams.push("user-agent=" + ch.userAgent);
+            if (ch.referer) chParams.push("referer=" + ch.referer);
+            if (ch.drmLicense) chParams.push("drmLicense=" + ch.drmLicense);
+            if (ch.drmScheme) chParams.push("drmScheme=" + ch.drmScheme);
+            if (ch.manifestType) chParams.push("manifestType=" + ch.manifestType);
+            return {
+                name: ch.name,
+                groupName: ch.group || groupName,
+                logo: ch.logo,
+                stream_url: ch.url + (chParams.length > 0 ? "|" + chParams.join("|") : ""),
+                streamUrl: ch.url + (chParams.length > 0 ? "|" + chParams.join("|") : "")
+            };
+        }));
+    } catch(e) {}
+
+    if (window.Android && typeof window.Android.playVideoWithGroup === "function") {
+        window.Android.playVideoWithGroup(fullUrl, item.name || "BandelTV", groupName, jsonStr);
+        return;
+    }
+
+    if (window.Android && typeof window.Android.playVideo === "function") {
+        window.Android.playVideo(fullUrl, item.name || "BandelTV");
+        return;
+    }
+
+    if (window.AppCreator && typeof window.AppCreator.play === "function") {
+        window.AppCreator.play(fullUrl, item.name || "BandelTV");
+        return;
+    }
+
+    window.location.href = fullUrl;
+}
+
+async function refreshPlaylist() {
+    const btnLandscape = document.getElementById("refreshButton");
+    const btnPortrait = document.getElementById("portraitRefreshButton");
+    const activeBtns = [btnLandscape, btnPortrait].filter(b => b !== null);
+
+    if (activeBtns.some(b => b.classList.contains("loading"))) return;
+
+    activeBtns.forEach(b => b.classList.add("loading"));
+
+    try {
+        await Promise.all([loadPlaylist(), loadBMKGInfo()]);
+    } catch (e) {
+        console.error("Refresh error:", e);
+    } finally {
+        setTimeout(function() {
+            activeBtns.forEach(b => b.classList.remove("loading"));
+        }, 600);
+    }
+}
+
+function getTimezoneAbbreviation() {
+    try {
+        const offset = -new Date().getTimezoneOffset() / 60;
+        if (offset === 7) return "WIB";
+        if (offset === 8) return "WITA";
+        if (offset === 9) return "WIT";
+        return (offset >= 0 ? "UTC+" + offset : "UTC" + offset);
+    } catch (e) {
+        return "WIB";
+    }
+}
+
+async function openMultiView() {
+    if (window.Android && typeof window.Android.setChannelsCache === "function") {
+        try {
+            let allCh = [];
+            if (typeof categories !== "undefined") {
+                for (let g in categories) {
+                    if (categories[g] && Array.isArray(categories[g])) {
+                        categories[g].forEach(item => {
+                            let clone = Object.assign({}, item);
+                            if (!clone.group || clone.group === "Lainnya") {
+                                clone.group = g;
+                            }
+                            allCh.push(clone);
+                        });
+                    }
+                }
+            }
+            if (allCh.length === 0 && Array.isArray(playlist)) {
+                allCh = playlist;
+            }
+
+            if (typeof DEFAULT_PLAYLISTS !== "undefined") {
+                for (let pl of DEFAULT_PLAYLISTS) {
+                    if (pl && pl.url && pl.status) {
+                        try {
+                            let text = await fetchM3uRaw(pl.url);
+                            let oldPlaylist = playlist;
+                            playlist = [];
+                            parseM3U(text);
+                            playlist.forEach(item => {
+                                if (!item.group || item.group === "Lainnya") {
+                                    item.group = pl.name || "Default";
+                                }
+                            });
+                            allCh = allCh.concat(playlist);
+                            playlist = oldPlaylist;
+                        } catch(err) {}
+                    }
+                }
+            }
+
+            if (typeof getCustomPlaylists === "function") {
+                let customList = getCustomPlaylists();
+                for (let cpl of customList) {
+                    if (cpl && cpl.playlistData && Array.isArray(cpl.playlistData) && cpl.playlistData.length > 0) {
+                        allCh = allCh.concat(cpl.playlistData);
+                    } else if (cpl && cpl.url && cpl.url.startsWith("http")) {
+                        try {
+                            let text = "";
+                            try {
+                                text = await fetchM3uRaw(cpl.url);
+                            } catch (e1) {
+                                try {
+                                    let proxy1 = "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(cpl.url);
+                                    text = await fetchM3uRaw(proxy1);
+                                } catch (e2) {
+                                    let proxy2 = "https://api.allorigins.win/raw?url=" + encodeURIComponent(cpl.url);
+                                    text = await fetchM3uRaw(proxy2);
+                                }
+                            }
+                            if (text) {
+                                let oldPlaylist = playlist;
+                                playlist = [];
+                                parseM3U(text);
+                                playlist.forEach(item => {
+                                    if (!item.group || item.group === "Lainnya") {
+                                        item.group = cpl.name || "Custom";
+                                    }
+                                });
+                                allCh = allCh.concat(playlist);
+                                playlist = oldPlaylist;
+                            }
+                        } catch(err) {}
+                    }
+                }
+            }
+
+            window.Android.setChannelsCache(JSON.stringify(allCh));
+        } catch(e) {}
+    }
+    if (window.Android && typeof window.Android.openMultiView === "function") {
+        window.Android.openMultiView();
+    } else {
+        alert("Fitur Multi-View memerlukan aplikasi Android.");
+    }
+}
+
+function updateDeviceClock() {
+    const clockEl = document.getElementById("deviceClock");
+    if (!clockEl) return;
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const tz = getTimezoneAbbreviation();
+    clockEl.textContent = `${hours}:${minutes}:${seconds} ${tz}`;
+}
+
+setInterval(updateDeviceClock, 1000);
+updateDeviceClock();
+
+function adjustHeaderControls() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const headerControls = document.getElementById("headerControls");
+    const mainHeader = document.querySelector(".main-header");
+    const sidebar = document.getElementById("sidebar");
+    const categoryWrap = document.querySelector(".category-header-wrap");
+
+    if (!headerControls) return;
+
+    if (isPortrait) {
+        if (categoryWrap && categoryWrap.nextElementSibling !== headerControls) {
+            sidebar.insertBefore(headerControls, categoryWrap.nextElementSibling);
+            headerControls.style.display = "flex";
+            headerControls.style.justifyContent = "space-around";
+            headerControls.style.padding = "10px 16px";
+            headerControls.style.margin = "0 12px 12px 12px";
+            headerControls.style.background = "rgba(11, 13, 16, 0.5)";
+            headerControls.style.border = "1px solid rgba(255, 255, 255, 0.12)";
+            headerControls.style.borderRadius = "14px";
+        }
+    } else {
+        if (mainHeader && !mainHeader.contains(headerControls)) {
+            mainHeader.appendChild(headerControls);
+            headerControls.removeAttribute("style");
+            headerControls.style.display = "flex";
+            headerControls.style.alignItems = "center";
+            headerControls.style.flexShrink = "0";
+        }
+    }
+}
+
+function enableSmoothTouchScroll(selector) {
+    const el = document.querySelector(selector) || document.getElementById(selector);
+    if (!el) return;
+    let startX = 0;
+    let startY = 0;
+    let startScrollTop = 0;
+    let startScrollLeft = 0;
+    let isDragging = false;
+
+    el.addEventListener("touchstart", function(e) {
+        if (e.touches.length === 1) {
+            startX = e.touches[0].pageX;
+            startY = e.touches[0].pageY;
+            startScrollTop = el.scrollTop;
+            startScrollLeft = el.scrollLeft;
+            isDragging = true;
+        }
+    }, {passive: true});
+
+    el.addEventListener("touchmove", function(e) {
+        if (!isDragging || e.touches.length !== 1) return;
+        const deltaX = e.touches[0].pageX - startX;
+        const deltaY = e.touches[0].pageY - startY;
+        el.scrollTop = startScrollTop - deltaY;
+        el.scrollLeft = startScrollLeft - deltaX;
+    }, {passive: true});
+
+    el.addEventListener("touchend", function() {
+        isDragging = false;
+    }, {passive: true});
+}
+
+window.addEventListener("resize", adjustHeaderControls);
+window.addEventListener("orientationchange", () => {
+    setTimeout(adjustHeaderControls, 150);
+});
+
+function togglePortraitSearch() {
+    const container = document.getElementById("portraitSearchContainer");
+    const input = document.getElementById("portraitSearchInput");
+    const mainInput = document.getElementById("searchInput");
+    if (!container) return;
+
+    if (container.classList.contains("open")) {
+        container.classList.remove("open");
+        if (mainInput) {
+            mainInput.value = "";
+            mainInput.dispatchEvent(new Event('input'));
+        }
+    } else {
+        container.classList.add("open");
+        if (input) input.focus();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Auto-restore saved grid columns on startup
+    let initialGridCols = 4;
+    try {
+        if (window.Android && typeof window.Android.getGridCols === "function") {
+            const androidC = window.Android.getGridCols();
+            if (androidC) initialGridCols = androidC;
+        }
+    } catch(e) {}
+    initialGridCols = parseInt(localStorage.getItem("bandeltv_grid_cols") || initialGridCols, 10);
+    if (!initialGridCols || isNaN(initialGridCols)) initialGridCols = 4;
+    window.__gridCols = initialGridCols;
+    applyGlobalGridCols(initialGridCols);
+
+    adjustHeaderControls();
+    enableSmoothTouchScroll("#playlistPopup");
+    enableSmoothTouchScroll(".category-wrapper");
+
+    // Pengecekan sniffer dijalankan setelah tampilan awal muncul (tidak blokir startup)
+    setTimeout(checkClientSideSniffer, 800);
+    const portraitInputEl = document.getElementById("portraitSearchInput");
+    if (portraitInputEl) {
+        portraitInputEl.addEventListener("input", function() {
+            const val = this.value;
+            const mainInput = document.getElementById("searchInput");
+            if (mainInput) {
+                mainInput.value = val;
+                mainInput.dispatchEvent(new Event('input'));
+            }
+        });
+    }
+
+    const vipInput = document.getElementById("vipCodeInput");
+    if (vipInput) {
+        vipInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" || e.keyCode === 13) {
+                submitVipCode();
+            }
+        });
+    }
+});
+
+adjustHeaderControls();
+initPlaylists();
+loadPlaylist();
+
+/* Cuaca Geolocation */
+let actualWeatherCoords = null;
+let actualWeatherBusy = false;
+
+function setWeatherDisplay(temp, locationName) {
+    const tempEl = document.getElementById("weatherTemp");
+    const locationEl = document.getElementById("weatherLocation");
+    if (!tempEl || !locationEl) return;
+
+    tempEl.textContent = Number.isFinite(Number(temp))
+        ? `${Math.round(Number(temp))}°C`
+        : "--°C";
+    locationEl.textContent = locationName ? `• ${locationName}` : "";
+}
+
+async function fetchActualWeather(latitude, longitude) {
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
+    const response = await fetch(weatherUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error("API cuaca tidak merespons");
+    const data = await response.json();
+    if (!data.current || data.current.temperature_2m == null) {
+        throw new Error("Data suhu tidak tersedia");
+    }
+
+    let locationName = "Lokasi Anda";
+    try {
+        const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&zoom=10&accept-language=id`;
+        const geoResponse = await fetch(nominatimUrl, { cache: "no-store" });
+        if (geoResponse.ok) {
+            const geoData = await geoResponse.json();
+            if (geoData && geoData.address) {
+                locationName = geoData.address.city || geoData.address.town || geoData.address.village || geoData.address.county || geoData.address.state || locationName;
+            }
+        }
+    } catch (e) {
+        try {
+            const reverseUrl = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&language=id&format=json`;
+            const geoResponse = await fetch(reverseUrl, { cache: "no-store" });
+            if (geoResponse.ok) {
+                const geoData = await geoResponse.json();
+                const place = geoData.results && geoData.results[0];
+                if (place) locationName = place.name || place.admin2 || place.admin1 || locationName;
+            }
+        } catch (ex) {}
+    }
+
+    const current = data.current;
+    setWeatherDisplay(current.temperature_2m, locationName);
+}
+
+function loadActualWeather(forceLocation = false) {
+    if (actualWeatherBusy) return;
+    const locationEl = document.getElementById("weatherLocation");
+    if (!locationEl) return;
+
+    if (actualWeatherCoords && !forceLocation) {
+        actualWeatherBusy = true;
+        fetchActualWeather(actualWeatherCoords.latitude, actualWeatherCoords.longitude)
+            .catch(() => { locationEl.textContent = "• Gagal"; })
+            .finally(() => { actualWeatherBusy = false; });
+        return;
+    }
+
+    if (!navigator.geolocation) {
+        locationEl.textContent = "• GPS tdk didukung";
+        return;
+    }
+
+    actualWeatherBusy = true;
+    locationEl.textContent = "• Mencari lokasi...";
+    navigator.geolocation.getCurrentPosition(
+        async function(position) {
+            actualWeatherCoords = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            };
+            try {
+                await fetchActualWeather(actualWeatherCoords.latitude, actualWeatherCoords.longitude);
+            } catch (e) {
+                locationEl.textContent = "• Gagal memuat";
+            } finally {
+                actualWeatherBusy = false;
+            }
+        },
+        function(error) {
+            actualWeatherBusy = false;
+            locationEl.textContent = "• Izin ditolak";
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 300000 }
+    );
+}
+
+// Tunda pemuatan cuaca agar tidak menghambat tampilan awal
+setTimeout(() => {
+    loadActualWeather();
+}, 2000);
+
+setInterval(function() {
+    if (actualWeatherCoords) loadActualWeather(false);
+}, 600000);
+
+loadBMKGInfo();
+setInterval(loadBMKGInfo, 180000);
+
+</script>
+
+<!-- ============================================================
+     PERLINDUNGAN ANTI INSPECT / F12 / DEVTOOLS (DINONAKTIFKAN AGAR BEBAS MENAMBAHKAN URL)
+     ============================================================ -->
+<script>
+(function() {
+    // Disabled to prevent false-positive restriction when using software keyboard or adding custom URLs
+})();
+</script>
+
+</body>
+</html>
